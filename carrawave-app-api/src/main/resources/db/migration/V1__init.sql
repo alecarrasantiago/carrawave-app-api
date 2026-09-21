@@ -67,7 +67,7 @@ create table device (
   user_id       bigint not null references app_user(id),
   platform      varchar(24) not null,
   app_version   varchar(24),
-  os_version    varchar(60),
+  os_version    varchar(255),
   locale        varchar(12),
   timezone      varchar(60),
   first_seen_at timestamptz not null default now(),

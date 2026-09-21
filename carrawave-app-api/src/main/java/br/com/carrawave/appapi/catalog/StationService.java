@@ -7,12 +7,15 @@ import br.com.carrawave.appapi.security.AuthenticatedUser;
 import br.com.carrawave.appapi.user.AppUser;
 import br.com.carrawave.appapi.user.AppUserRepository;
 import br.com.carrawave.appapi.user.FavoriteRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -21,6 +24,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class StationService {
+
+    private static final Logger log = LoggerFactory.getLogger(StationService.class);
 
     private final StationRepository stationRepository;
     private final CityRepository cityRepository;
@@ -45,6 +50,7 @@ public class StationService {
         this.appUserRepository = appUserRepository;
     }
 
+    @Transactional(readOnly = true)
     public PageResponse<StationSummary> search(String cityParam, String stateParam, String genreParam,
                                                 String q, Boolean onlyLive, String sort,
                                                 Pageable pageable, AuthenticatedUser principal) {
@@ -77,6 +83,10 @@ public class StationService {
                 : org.springframework.data.domain.PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), resolvedSort);
 
         Page<Station> page = stationRepository.findAll(spec, sortedPageable);
+        // DEBUG TEMPORARIO - remover depois de resolver o bug das 0 emissoras
+        log.info("DEBUG stations search: city={} state={} genre={} q={} sort={} page={} size={} -> totalElements={} contentSize={}",
+                cityParam, stateParam, genreParam, q, sort, sortedPageable.getPageNumber(), sortedPageable.getPageSize(),
+                page.getTotalElements(), page.getContent().size());
 
         Set<Long> favoriteIds = resolveFavoriteStationIds(principal);
         Map<Long, Long> listeners = listenerCounts(page.getContent().stream().map(Station::getId).toList());
@@ -88,6 +98,7 @@ public class StationService {
         return PageResponse.of(page, content);
     }
 
+    @Transactional(readOnly = true)
     public StationDetail getDetail(UUID stationPublicId, AuthenticatedUser principal) {
         Station station = stationRepository.findByPublicId(stationPublicId)
                 .orElseThrow(ApiException::stationNotFound);
@@ -122,6 +133,7 @@ public class StationService {
     }
 
     @Cacheable("home")
+    @Transactional(readOnly = true)
     public HomeResponse home(AuthenticatedUser principal) {
         Set<Long> favoriteIds = resolveFavoriteStationIds(principal);
 
@@ -173,6 +185,7 @@ public class StationService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public SearchResponse searchAll(String q, AuthenticatedUser principal) {
         if (q == null || q.isBlank()) {
             return new SearchResponse(List.of(), List.of(), List.of());

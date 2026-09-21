@@ -43,7 +43,7 @@ async function doAnonymousAuth(): Promise<void> {
       deviceId,
       platform: detectPlatform(),
       appVersion: '0.1.0',
-      osVersion: navigator.userAgent,
+      osVersion: navigator.userAgent.slice(0, 120),
       locale: navigator.language ?? 'pt-BR',
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     }),

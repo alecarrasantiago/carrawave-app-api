@@ -2,6 +2,7 @@ package br.com.carrawave.appapi.catalog;
 
 import br.com.carrawave.appapi.catalog.dto.*;
 import br.com.carrawave.appapi.security.AuthenticatedUser;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +29,16 @@ public class StationController {
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Boolean onlyLive,
             @RequestParam(required = false) String sort,
-            Pageable pageable,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
             @AuthenticationPrincipal AuthenticatedUser principal
     ) {
+        // Montamos o Pageable manualmente (sem sort aqui) porque o resolvedor
+        // automático do Spring também escuta o parâmetro "sort" da URL e
+        // tentaria interpretar "popular"/"recent" como nome de coluna,
+        // colidindo com o nosso "sort" de negócio (popular|name|recent).
+        // A ordenação real é resolvida dentro de StationService.search().
+        Pageable pageable = PageRequest.of(page, size);
         return stationService.search(city, state, genre, q, onlyLive, sort, pageable, principal);
     }
 
