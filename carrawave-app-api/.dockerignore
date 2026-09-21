@@ -1,0 +1,6 @@
+target
+.git
+*.md
+run-log*.txt
+run.sh
+run.ps1
