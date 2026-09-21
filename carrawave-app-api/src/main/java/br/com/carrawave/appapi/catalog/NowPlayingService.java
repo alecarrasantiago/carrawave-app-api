@@ -40,34 +40,25 @@ public class NowPlayingService {
     }
 
     public String getNowPlaying(UUID stationPublicId) {
-        // TEMP-DEBUG: captura qualquer falha e devolve o motivo real no
-        // corpo da resposta, só pra diagnosticar o 500 — será revertido
-        // assim que a causa for confirmada.
-        try {
-            Station station = stationRepository.findByPublicId(stationPublicId)
-                    .orElseThrow(ApiException::stationNotFound);
+        Station station = stationRepository.findByPublicId(stationPublicId)
+                .orElseThrow(ApiException::stationNotFound);
 
-            if ("HLS".equalsIgnoreCase(station.getStreamFormat())) {
-                return null;
-            }
-
-            long stationId = station.getId();
-            CacheEntry cached = cache.get(stationId);
-            long now = System.currentTimeMillis();
-            if (cached != null && now - cached.fetchedAt < CACHE_TTL_MILLIS) {
-                return cached.title;
-            }
-
-            String title = fetchWithTimeout(station.getStreamUrl());
-            cache.put(stationId, new CacheEntry(title, now));
-            return title;
-        } catch (ApiException e) {
-            throw e;
-        } catch (Throwable t) {
-            java.io.StringWriter sw = new java.io.StringWriter();
-            t.printStackTrace(new java.io.PrintWriter(sw));
-            return "TEMP-DEBUG: " + sw.toString().substring(0, Math.min(1500, sw.toString().length()));
+        // HLS não usa o protocolo ICY (o metadado, quando existe, vem
+        // embutido nos segmentos via tags ID3) — não vale a pena tentar.
+        if ("HLS".equalsIgnoreCase(station.getStreamFormat())) {
+            return null;
         }
+
+        long stationId = station.getId();
+        CacheEntry cached = cache.get(stationId);
+        long now = System.currentTimeMillis();
+        if (cached != null && now - cached.fetchedAt < CACHE_TTL_MILLIS) {
+            return cached.title;
+        }
+
+        String title = fetchWithTimeout(station.getStreamUrl());
+        cache.put(stationId, new CacheEntry(title, now));
+        return title;
     }
 
     private String fetchWithTimeout(String streamUrl) {
