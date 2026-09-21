@@ -72,9 +72,7 @@ const UF_NAMES: Record<string, string> = {
   TO: 'Tocantins',
 };
 
-const STATE_NAME_TO_UF: Record<string, string> = Object.fromEntries(
-  Object.entries(UF_NAMES).map(([uf, name]) => [name, uf])
-);
+const PAGE_SIZE = 60;
 
 export default function App() {
   const [nav, setNav] = useState<NavKey>('home');
@@ -86,6 +84,8 @@ export default function App() {
   const [genres, setGenres] = useState<GenreSummary[]>([]);
   const [stations, setStations] = useState<StationSummary[]>([]);
   const [totalElements, setTotalElements] = useState(0);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [stateFilter, setStateFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [me, setMe] = useState<MeResponse | null>(null);
@@ -107,7 +107,7 @@ export default function App() {
 
   const debounceRef = useRef<number | null>(null);
 
-  const stateChips = useMemo(() => {
+  const stateOptions = useMemo(() => {
     const ufs = Array.from(new Set(cities.map((c) => c.state).filter(Boolean)));
     const priority = ['RJ', 'SP'];
     ufs.sort((a, b) => {
@@ -116,10 +116,10 @@ export default function App() {
       if (pa !== -1 || pb !== -1) return (pa === -1 ? 99 : pa) - (pb === -1 ? 99 : pb);
       return (UF_NAMES[a] ?? a).localeCompare(UF_NAMES[b] ?? b);
     });
-    return ufs.map((uf) => UF_NAMES[uf] ?? uf);
+    return ufs.map((uf) => ({ uf, label: UF_NAMES[uf] ?? uf }));
   }, [cities]);
 
-  const chips = useMemo(() => ['Todas', ...stateChips, ...genres.slice(0, 6).map((g) => g.name)], [stateChips, genres]);
+  const chips = useMemo(() => ['Todas', ...genres.slice(0, 8).map((g) => g.name)], [genres]);
 
   async function refreshFavorites() {
     try {
@@ -184,7 +184,6 @@ export default function App() {
     }
 
     setLoading(true);
-    const stateMatch = STATE_NAME_TO_UF[chip];
     const genreMatch = genres.find((g) => g.name === chip);
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
@@ -201,12 +200,16 @@ export default function App() {
           // como se fossem podcast.
           setStations([]);
         } else {
+          // Sempre busca a primeira página aqui — o app carrega pouco de
+          // início (leve e rápido de abrir) e "Carregar mais" (loadMore,
+          // abaixo) busca o resto só se a pessoa pedir.
           const res = await searchStations({
-            state: stateMatch,
+            state: stateFilter || undefined,
             genre: genreMatch?.id,
             q: query || undefined,
             sort: 'popular',
-            size: 200,
+            page: 0,
+            size: PAGE_SIZE,
           });
           setStations(res.content);
           setTotalElements(res.totalElements);
@@ -219,7 +222,30 @@ export default function App() {
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entered, retryKey, nav, chip, query, cities, genres, favorites]);
+  }, [entered, retryKey, nav, chip, query, stateFilter, cities, genres, favorites]);
+
+  async function loadMore() {
+    if (loadingMore || nav === 'podcasts' || nav === 'fav' || nav === 'recent') return;
+    setLoadingMore(true);
+    try {
+      const genreMatch = genres.find((g) => g.name === chip);
+      const nextPage = Math.floor(stations.length / PAGE_SIZE);
+      const res = await searchStations({
+        state: stateFilter || undefined,
+        genre: genreMatch?.id,
+        q: query || undefined,
+        sort: 'popular',
+        page: nextPage,
+        size: PAGE_SIZE,
+      });
+      setStations((prev) => [...prev, ...res.content]);
+      setTotalElements(res.totalElements);
+    } catch {
+      usePlayerStore.getState().showToast('Não foi possível carregar mais rádios.');
+    } finally {
+      setLoadingMore(false);
+    }
+  }
 
   function handleRetry() {
     setLoadError(null);
@@ -417,6 +443,29 @@ export default function App() {
                 <div style={{ font: '500 13px Figtree', color: 'var(--ink60)' }}>{n === 1 ? '1 emissora' : `${n} emissoras`}</div>
               </div>
 
+              {showChips && stateOptions.length > 0 && (
+                <div style={{ marginTop: 16 }}>
+                  <select
+                    value={stateFilter}
+                    onChange={(e) => setStateFilter(e.target.value)}
+                    style={{
+                      padding: '9px 14px',
+                      borderRadius: 999,
+                      border: '1.5px solid var(--line)',
+                      background: 'var(--surf)',
+                      color: 'var(--ink)',
+                      font: '600 12.5px Figtree',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <option value="">Todos os estados</option>
+                    {stateOptions.map((s) => (
+                      <option key={s.uf} value={s.uf}>{s.label}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               {showChips && (
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 16 }}>
                   {chips.map((c) => (
@@ -550,6 +599,26 @@ export default function App() {
                   {stations.map((st) => (
                     <StationRow key={st.id} station={st} favorited={isFavorited(st.id)} onPlay={() => playStation(st)} onToggleFavorite={() => toggleFavorite(st)} />
                   ))}
+                </div>
+              )}
+
+              {!loadError && (nav === 'home' || nav === 'explore') && stations.length < totalElements && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 26 }}>
+                  <div
+                    onClick={loadMore}
+                    className="cw-hover-soft"
+                    style={{
+                      cursor: loadingMore ? 'default' : 'pointer',
+                      padding: '11px 22px',
+                      borderRadius: 999,
+                      border: '1.5px solid var(--line)',
+                      font: '700 13px Figtree',
+                      color: 'var(--ink)',
+                      opacity: loadingMore ? 0.6 : 1,
+                    }}
+                  >
+                    {loadingMore ? 'Carregando…' : 'Carregar mais'}
+                  </div>
                 </div>
               )}
             </>
