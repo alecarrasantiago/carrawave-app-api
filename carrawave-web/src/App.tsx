@@ -27,6 +27,7 @@ const MOBILE_PLAYER_H = 62;
 const TITLES: Record<NavKey, string> = {
   home: 'Ao vivo agora',
   explore: 'Explorar rádios',
+  podcasts: 'Melhores podcasts',
   fav: 'Suas favoritas',
   recent: 'Ouvidas recentemente',
   settings: 'Configurações',
@@ -35,6 +36,7 @@ const TITLES: Record<NavKey, string> = {
 const SOURCE_BY_NAV: Record<NavKey, PlaybackSource> = {
   home: 'HOME_LIVE_NOW',
   explore: 'EXPLORE',
+  podcasts: 'EXPLORE',
   fav: 'FAVORITES',
   recent: 'HISTORY',
   settings: 'EXPLORE',
@@ -146,6 +148,18 @@ export default function App() {
           const stationsFromHistory = items.map((item) => item.station);
           setHistory(stationsFromHistory);
           setStations(stationsFromHistory);
+        } else if (nav === 'podcasts') {
+          // Ainda não temos podcast "de verdade" (episódios/RSS) — por agora
+          // esta aba mostra as rádios de entrevista, debate e variedades
+          // marcadas com o gênero Podcasts, tocadas ao vivo como as demais.
+          const podcastGenre = genres.find((g) => g.name === 'Podcasts');
+          const res = await searchStations({
+            genre: podcastGenre?.id,
+            q: query || undefined,
+            sort: 'popular',
+            size: 60,
+          });
+          setStations(res.content);
         } else {
           const res = await searchStations({
             city: cityMatch?.id,

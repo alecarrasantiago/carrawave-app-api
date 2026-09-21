@@ -122,3 +122,13 @@ export function SettingsIcon({ size = 20, color = 'currentColor' }: IconProps) {
     </svg>
   );
 }
+
+export function MicIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.3} strokeLinecap="round" strokeLinejoin="round">
+      <rect x="8.5" y="3" width="7" height="12" rx="3.5" />
+      <path d="M5.5 12.5a6.5 6.5 0 0013 0" />
+      <path d="M12 19v2.4M8.8 21.4h6.4" />
+    </svg>
+  );
+}
