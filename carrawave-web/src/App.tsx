@@ -6,7 +6,7 @@ import { PlayerBar } from './components/PlayerBar';
 import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
 import { WelcomeGate } from './components/WelcomeGate';
-import { GridIcon, ListIcon, SearchIcon, LockIcon } from './components/icons';
+import { GridIcon, ListIcon, SearchIcon, LockIcon, MicIcon } from './components/icons';
 import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, removeFavorite, searchStations } from './api/catalog';
 import { logout } from './api/auth';
 import { storage } from './api/storage';
@@ -42,6 +42,40 @@ const SOURCE_BY_NAV: Record<NavKey, PlaybackSource> = {
   settings: 'EXPLORE',
 };
 
+const UF_NAMES: Record<string, string> = {
+  AC: 'Acre',
+  AL: 'Alagoas',
+  AM: 'Amazonas',
+  AP: 'Amapá',
+  BA: 'Bahia',
+  CE: 'Ceará',
+  DF: 'Distrito Federal',
+  ES: 'Espírito Santo',
+  GO: 'Goiás',
+  MA: 'Maranhão',
+  MG: 'Minas Gerais',
+  MS: 'Mato Grosso do Sul',
+  MT: 'Mato Grosso',
+  PA: 'Pará',
+  PB: 'Paraíba',
+  PE: 'Pernambuco',
+  PI: 'Piauí',
+  PR: 'Paraná',
+  RJ: 'Rio de Janeiro',
+  RN: 'Rio Grande do Norte',
+  RO: 'Rondônia',
+  RR: 'Roraima',
+  RS: 'Rio Grande do Sul',
+  SC: 'Santa Catarina',
+  SE: 'Sergipe',
+  SP: 'São Paulo',
+  TO: 'Tocantins',
+};
+
+const STATE_NAME_TO_UF: Record<string, string> = Object.fromEntries(
+  Object.entries(UF_NAMES).map(([uf, name]) => [name, uf])
+);
+
 export default function App() {
   const [nav, setNav] = useState<NavKey>('home');
   const [chip, setChip] = useState('Todas');
@@ -51,6 +85,7 @@ export default function App() {
   const [cities, setCities] = useState<CitySummary[]>([]);
   const [genres, setGenres] = useState<GenreSummary[]>([]);
   const [stations, setStations] = useState<StationSummary[]>([]);
+  const [totalElements, setTotalElements] = useState(0);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [me, setMe] = useState<MeResponse | null>(null);
@@ -72,7 +107,19 @@ export default function App() {
 
   const debounceRef = useRef<number | null>(null);
 
-  const chips = useMemo(() => ['Todas', ...cities.slice(0, 2).map((c) => c.name), ...genres.slice(0, 6).map((g) => g.name)], [cities, genres]);
+  const stateChips = useMemo(() => {
+    const ufs = Array.from(new Set(cities.map((c) => c.state).filter(Boolean)));
+    const priority = ['RJ', 'SP'];
+    ufs.sort((a, b) => {
+      const pa = priority.indexOf(a);
+      const pb = priority.indexOf(b);
+      if (pa !== -1 || pb !== -1) return (pa === -1 ? 99 : pa) - (pb === -1 ? 99 : pb);
+      return (UF_NAMES[a] ?? a).localeCompare(UF_NAMES[b] ?? b);
+    });
+    return ufs.map((uf) => UF_NAMES[uf] ?? uf);
+  }, [cities]);
+
+  const chips = useMemo(() => ['Todas', ...stateChips, ...genres.slice(0, 6).map((g) => g.name)], [stateChips, genres]);
 
   async function refreshFavorites() {
     try {
@@ -137,7 +184,7 @@ export default function App() {
     }
 
     setLoading(true);
-    const cityMatch = cities.find((c) => c.name === chip);
+    const stateMatch = STATE_NAME_TO_UF[chip];
     const genreMatch = genres.find((g) => g.name === chip);
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
@@ -149,26 +196,20 @@ export default function App() {
           setHistory(stationsFromHistory);
           setStations(stationsFromHistory);
         } else if (nav === 'podcasts') {
-          // Ainda não temos podcast "de verdade" (episódios/RSS) — por agora
-          // esta aba mostra as rádios de entrevista, debate e variedades
-          // marcadas com o gênero Podcasts, tocadas ao vivo como as demais.
-          const podcastGenre = genres.find((g) => g.name === 'Podcasts');
-          const res = await searchStations({
-            genre: podcastGenre?.id,
-            q: query || undefined,
-            sort: 'popular',
-            size: 60,
-          });
-          setStations(res.content);
+          // Ainda não temos podcasts de verdade (episódios/RSS) — a aba
+          // mostra um aviso de "em breve" em vez de listar rádios ao vivo
+          // como se fossem podcast.
+          setStations([]);
         } else {
           const res = await searchStations({
-            city: cityMatch?.id,
+            state: stateMatch,
             genre: genreMatch?.id,
             q: query || undefined,
             sort: 'popular',
-            size: 60,
+            size: 200,
           });
           setStations(res.content);
+          setTotalElements(res.totalElements);
         }
         setLoadError(null);
       } catch {
@@ -278,7 +319,7 @@ export default function App() {
 
   const pageTitle = TITLES[nav];
   const showChips = nav === 'home' || nav === 'explore';
-  const n = stations.length;
+  const n = nav === 'home' || nav === 'explore' ? totalElements : stations.length;
 
   const hasStation = !!current;
   const bottomReserved = isMobile ? MOBILE_TABBAR_H + (hasStation ? MOBILE_PLAYER_H : 0) : 0;
@@ -359,6 +400,16 @@ export default function App() {
         >
           {nav === 'settings' ? (
             <SettingsPanel me={me} onAuthClick={handleAuthClick} />
+          ) : nav === 'podcasts' ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '80px 40px' }}>
+              <div style={{ width: 96, height: 96, borderRadius: 999, background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MicIcon size={36} color="var(--ink40)" />
+              </div>
+              <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>Podcasts — em breve.</div>
+              <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
+                Estamos preparando os melhores podcasts pra você. Por enquanto, aproveite as rádios ao vivo em Explorar.
+              </div>
+            </div>
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
