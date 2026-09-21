@@ -40,6 +40,7 @@ public class MeService {
         this.playSessionRepository = playSessionRepository;
     }
 
+    @Transactional(readOnly = true)
     public MeResponse getMe(AuthenticatedUser principal) {
         AppUser user = resolveUser(principal);
         long favoriteCount = favoriteRepository.countByUserId(user.getId());
@@ -63,6 +64,7 @@ public class MeService {
         return getMe(principal);
     }
 
+    @Transactional(readOnly = true)
     public List<StationSummary> getFavorites(AuthenticatedUser principal) {
         AppUser user = resolveUser(principal);
         List<Favorite> favorites = favoriteRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
@@ -93,6 +95,7 @@ public class MeService {
         favoriteRepository.deleteByUserIdAndStationId(user.getId(), station.getId());
     }
 
+    @Transactional(readOnly = true)
     public List<HistoryItem> getHistory(AuthenticatedUser principal, int size) {
         AppUser user = resolveUser(principal);
         List<PlaySession> sessions = playSessionRepository.findByUserIdOrderByStartedAtDesc(user.getId());
@@ -116,6 +119,7 @@ public class MeService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public SettingsResponse getSettings(AuthenticatedUser principal) {
         AppUser user = resolveUser(principal);
         UserSettings settings = userSettingsRepository.findByUserId(user.getId())
