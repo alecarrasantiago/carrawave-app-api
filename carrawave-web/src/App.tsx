@@ -28,6 +28,7 @@ const TITLES: Record<NavKey, string> = {
   home: 'Ao vivo agora',
   explore: 'Explorar rádios',
   podcasts: 'Melhores podcasts',
+  samba: 'Samba Enredo',
   fav: 'Suas favoritas',
   recent: 'Ouvidas recentemente',
   settings: 'Configurações',
@@ -37,6 +38,7 @@ const SOURCE_BY_NAV: Record<NavKey, PlaybackSource> = {
   home: 'HOME_LIVE_NOW',
   explore: 'EXPLORE',
   podcasts: 'EXPLORE',
+  samba: 'EXPLORE',
   fav: 'FAVORITES',
   recent: 'HISTORY',
   settings: 'EXPLORE',
@@ -199,6 +201,18 @@ export default function App() {
           // mostra um aviso de "em breve" em vez de listar rádios ao vivo
           // como se fossem podcast.
           setStations([]);
+        } else if (nav === 'samba') {
+          // Aba fixa com as rádios de samba-enredo/carnaval do Rio
+          // verificadas manualmente — sempre mostra todas de uma vez.
+          const sambaGenre = genres.find((g) => g.slug === 'samba-enredo');
+          const res = await searchStations({
+            genre: sambaGenre?.id,
+            sort: 'popular',
+            page: 0,
+            size: PAGE_SIZE,
+          });
+          setStations(res.content);
+          setTotalElements(res.totalElements);
         } else {
           // Sempre busca a primeira página aqui — o app carrega pouco de
           // início (leve e rápido de abrir) e "Carregar mais" (loadMore,
@@ -225,7 +239,7 @@ export default function App() {
   }, [entered, retryKey, nav, chip, query, stateFilter, cities, genres, favorites]);
 
   async function loadMore() {
-    if (loadingMore || nav === 'podcasts' || nav === 'fav' || nav === 'recent') return;
+    if (loadingMore || nav === 'podcasts' || nav === 'samba' || nav === 'fav' || nav === 'recent') return;
     setLoadingMore(true);
     try {
       const genreMatch = genres.find((g) => g.name === chip);

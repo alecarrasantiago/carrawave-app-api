@@ -132,3 +132,14 @@ export function MicIcon({ size = 20, color = 'currentColor' }: IconProps) {
     </svg>
   );
 }
+
+export function CarnivalMaskIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.1} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 9c0-2.6 2-4.5 4.5-4.5 1.6 0 2.8.7 3.5 1.7.7-1 1.9-1.7 3.5-1.7C17 4.5 19 6.4 19 9c0 3.6-2.6 6.7-6 7.8V18a1 1 0 01-2 0v-1.2c-3.4-1.1-6-4.2-6-7.8z" />
+      <circle cx="8" cy="9" r="1.4" fill={color} stroke="none" />
+      <circle cx="16" cy="9" r="1.4" fill={color} stroke="none" />
+      <path d="M4.5 6.8L2.5 5.4M19.5 6.8l2-1.4M5 3.2l.8 1.8M19 3.2l-.8 1.8" />
+    </svg>
+  );
+}

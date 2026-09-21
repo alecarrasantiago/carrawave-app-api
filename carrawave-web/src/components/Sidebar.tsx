@@ -1,14 +1,15 @@
 import type { MeResponse, StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
-import { ClockIcon, CompassIcon, HeartIcon, HomeIcon, MicIcon, SettingsIcon } from './icons';
+import { CarnivalMaskIcon, ClockIcon, CompassIcon, HeartIcon, HomeIcon, MicIcon, SettingsIcon } from './icons';
 import { useIsMobile } from '../hooks/useIsMobile';
 
-export type NavKey = 'home' | 'explore' | 'podcasts' | 'fav' | 'recent' | 'settings';
+export type NavKey = 'home' | 'explore' | 'podcasts' | 'samba' | 'fav' | 'recent' | 'settings';
 
 const NAV: { key: NavKey; label: string }[] = [
   { key: 'home', label: 'Início' },
   { key: 'explore', label: 'Explorar' },
   { key: 'podcasts', label: 'Podcasts' },
+  { key: 'samba', label: 'Samba Enredo' },
   { key: 'fav', label: 'Favoritos' },
   { key: 'recent', label: 'Recentes' },
   { key: 'settings', label: 'Configurações' },
@@ -18,6 +19,7 @@ const NAV_ICON: Record<NavKey, (color: string) => JSX.Element> = {
   home: (color) => <HomeIcon size={21} color={color} />,
   explore: (color) => <CompassIcon size={21} color={color} />,
   podcasts: (color) => <MicIcon size={20} color={color} />,
+  samba: (color) => <CarnivalMaskIcon size={20} color={color} />,
   fav: (color) => <HeartIcon size={20} filled={false} color={color} />,
   recent: (color) => <ClockIcon size={20} color={color} />,
   settings: (color) => <SettingsIcon size={20} color={color} />,
