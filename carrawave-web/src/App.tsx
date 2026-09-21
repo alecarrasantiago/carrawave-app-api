@@ -252,13 +252,17 @@ export default function App() {
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    // cities e favorites ficaram de fora de propósito: nenhum dos dois
-    // entra na busca abaixo (favorites só é usado no early-return da aba
-    // "fav", que já retorna antes desse fetch), mas como novo array/
-    // referência a cada carregamento, mantê-los aqui disparava a mesma
-    // busca de novo (até 3x seguidas) só de cities/genres/favoritos
-    // chegarem da API — daí a sensação de "app lento, muita requisição".
-  }, [entered, retryKey, nav, chip, query, stateFilter, genres]);
+    // cities, genres e favorites ficaram de fora de propósito: são lidos
+    // dentro do efeito (via closure), mas nenhum precisa disparar uma nova
+    // busca sozinho — a única vez que o valor de "genres" importa de
+    // verdade é pra resolver o chip/gênero escolhido, e isso só pode
+    // acontecer depois que "genres" já carregou (os chips só existem na
+    // tela depois disso) e sempre acompanhado de uma mudança em "chip" ou
+    // "nav", que já estão na lista abaixo. Antes, cities/genres/favorites
+    // entravam aqui só como referência de array — toda vez que qualquer um
+    // chegava da API (em momentos diferentes), a MESMA busca de rádios
+    // disparava de novo, multiplicando requisições logo na abertura do app.
+  }, [entered, retryKey, nav, chip, query, stateFilter]);
 
   async function loadMore() {
     if (loadingMore || nav === 'podcasts' || nav === 'samba' || nav === 'fav' || nav === 'recent') return;
