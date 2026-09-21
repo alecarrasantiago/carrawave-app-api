@@ -1,9 +1,13 @@
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
+
 interface Props {
   onContinueAsGuest: () => void;
   onOpenAuth: () => void;
 }
 
 export function WelcomeGate({ onContinueAsGuest, onOpenAuth }: Props) {
+  const { canInstall, installed, isIOS, promptInstall } = useInstallPrompt();
+
   return (
     <div
       style={{
@@ -87,6 +91,43 @@ export function WelcomeGate({ onContinueAsGuest, onOpenAuth }: Props) {
         <div style={{ font: '500 11.5px Figtree', color: 'var(--ink40)', marginTop: 18, lineHeight: 1.5 }}>
           Sem cadastro, seus favoritos ficam guardados neste aparelho. Você pode criar uma conta depois em Configurações.
         </div>
+
+        {!installed && (
+          <div
+            style={{
+              marginTop: 20,
+              paddingTop: 16,
+              borderTop: '1px solid var(--line)',
+              width: '100%',
+            }}
+          >
+            {canInstall ? (
+              <div
+                onClick={() => promptInstall()}
+                className="cw-hover-soft"
+                style={{
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 7,
+                  padding: '8px 16px',
+                  borderRadius: 999,
+                  border: '1.5px solid var(--line)',
+                  font: '600 12px Figtree',
+                  color: 'var(--ink60)',
+                }}
+              >
+                Instalar Carra Wave como app
+              </div>
+            ) : (
+              <div style={{ font: '500 11.5px Figtree', color: 'var(--ink40)', lineHeight: 1.5 }}>
+                {isIOS
+                  ? 'Dica: toque em Compartilhar e depois em "Adicionar à Tela de Início" para instalar como app.'
+                  : 'Dica: procure "Instalar app" ou "Adicionar à tela inicial" no menu do navegador para instalar.'}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
