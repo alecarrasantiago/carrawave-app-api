@@ -68,7 +68,8 @@ export interface MeResponse {
   createdAt: string;
 }
 
-export interface HistoryItem extends StationSummary {
+export interface HistoryItem {
+  station: StationSummary;
   lastPlayedAt: string;
 }
 

@@ -82,6 +82,9 @@ public class MeService {
     @Transactional
     public void addFavorite(AuthenticatedUser principal, UUID stationPublicId) {
         AppUser user = resolveUser(principal);
+        if (user.isAnonymous()) {
+            throw ApiException.actionNotAllowedForAnonymous();
+        }
         Station station = stationRepository.findByPublicId(stationPublicId).orElseThrow(ApiException::stationNotFound);
         if (!favoriteRepository.existsByUserIdAndStationId(user.getId(), station.getId())) {
             favoriteRepository.save(new Favorite(user.getId(), station.getId()));
@@ -91,6 +94,9 @@ public class MeService {
     @Transactional
     public void removeFavorite(AuthenticatedUser principal, UUID stationPublicId) {
         AppUser user = resolveUser(principal);
+        if (user.isAnonymous()) {
+            throw ApiException.actionNotAllowedForAnonymous();
+        }
         Station station = stationRepository.findByPublicId(stationPublicId).orElseThrow(ApiException::stationNotFound);
         favoriteRepository.deleteByUserIdAndStationId(user.getId(), station.getId());
     }

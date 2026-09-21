@@ -157,7 +157,9 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
           </div>
         ))}
         {favorites.length === 0 && (
-          <div style={{ font: '500 12px Figtree', color: 'var(--ink40)', padding: '4px 8px' }}>Nenhuma ainda.</div>
+          <div style={{ font: '500 12px Figtree', color: 'var(--ink40)', padding: '4px 8px', lineHeight: 1.4 }}>
+            {logged ? 'Nenhuma ainda.' : 'Crie uma conta para favoritar rádios.'}
+          </div>
         )}
       </div>
 

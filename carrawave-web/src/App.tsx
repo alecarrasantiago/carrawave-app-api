@@ -143,8 +143,9 @@ export default function App() {
       try {
         if (nav === 'recent') {
           const items = await fetchHistory(30);
-          setHistory(items);
-          setStations(items);
+          const stationsFromHistory = items.map((item) => item.station);
+          setHistory(stationsFromHistory);
+          setStations(stationsFromHistory);
         } else {
           const res = await searchStations({
             city: cityMatch?.id,
@@ -175,6 +176,11 @@ export default function App() {
   }
 
   async function toggleFavorite(station: StationSummary) {
+    if (me?.accountType !== 'REGISTERED') {
+      usePlayerStore.getState().showToast('Crie uma conta para favoritar suas rádios.');
+      setAuthOpen(true);
+      return;
+    }
     const willFavorite = !isFavorited(station.id);
     usePlayerStore.getState().toggleFavorite(station.id);
     usePlayerStore.getState().showToast(willFavorite ? `${station.name} nos favoritos` : 'Removida dos favoritos');
@@ -410,13 +416,52 @@ export default function App() {
                 </div>
               )}
 
-              {!loadError && !connecting && !loading && n === 0 && (
+              {!loadError && !connecting && !loading && n === 0 && nav === 'fav' && me?.accountType !== 'REGISTERED' && (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '80px 40px' }}>
+                  <div style={{ width: 96, height: 96, borderRadius: 999, background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <LockIcon size={36} color="var(--ink40)" />
+                  </div>
+                  <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>Favoritos são só para quem tem conta.</div>
+                  <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
+                    Crie uma conta gratuita para salvar suas rádios favoritas e encontrá-las de novo em qualquer aparelho.
+                  </div>
+                  <div
+                    onClick={() => setAuthOpen(true)}
+                    className="cw-hover-soft"
+                    style={{
+                      cursor: 'pointer',
+                      marginTop: 18,
+                      padding: '11px 22px',
+                      borderRadius: 999,
+                      background: 'var(--accent)',
+                      color: 'var(--onacc)',
+                      font: '700 13.5px Figtree',
+                    }}
+                  >
+                    Entrar ou criar conta
+                  </div>
+                </div>
+              )}
+
+              {!loadError && !connecting && !loading && n === 0 && !(nav === 'fav' && me?.accountType !== 'REGISTERED') && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '80px 40px' }}>
                   <div style={{ width: 96, height: 96, borderRadius: 999, background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <SearchIcon size={40} color="var(--ink40)" />
                   </div>
-                  <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>Nenhuma rádio encontrada.</div>
-                  <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9 }}>Tente outro nome, cidade ou gênero.</div>
+                  <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>
+                    {nav === 'fav'
+                      ? 'Você ainda não tem favoritos.'
+                      : nav === 'recent'
+                      ? 'Você ainda não ouviu nenhuma rádio.'
+                      : 'Nenhuma rádio encontrada.'}
+                  </div>
+                  <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9 }}>
+                    {nav === 'fav'
+                      ? 'Toque no coração de uma rádio para guardá-la aqui.'
+                      : nav === 'recent'
+                      ? 'As rádios que você tocar vão aparecer aqui.'
+                      : 'Tente outro nome, cidade ou gênero.'}
+                  </div>
                 </div>
               )}
 
