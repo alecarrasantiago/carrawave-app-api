@@ -4,7 +4,7 @@ create table city (
   id           bigserial primary key,
   public_id    uuid not null unique default uuid_generate_v4(),
   name         varchar(120) not null,
-  state        char(2) not null,
+  state        varchar(2) not null,
   slug         varchar(140) not null unique,
   created_at   timestamptz not null default now()
 );
@@ -91,10 +91,10 @@ create table play_session (
   station_id     bigint not null references station(id),
   source         varchar(32),
   started_at     timestamptz not null,
-  last_heartbeat_at timestamptz,
   ended_at       timestamptz,
   played_seconds int not null default 0,
-  end_reason     varchar(24)
+  end_reason     varchar(24),
+  last_heartbeat_at timestamptz
 );
 create index idx_play_user_time on play_session(user_id, started_at desc);
 create index idx_play_station_time on play_session(station_id, started_at desc);
