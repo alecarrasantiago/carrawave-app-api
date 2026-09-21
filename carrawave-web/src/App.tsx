@@ -14,6 +14,7 @@ import type { CitySummary, GenreSummary, MeResponse, StationSummary } from './ap
 import { usePlayerStore } from './store/playerStore';
 import { audioEngine, type PlaybackSource } from './audio/AudioEngine';
 import { useIsMobile } from './hooks/useIsMobile';
+import { useInstallPrompt } from './hooks/useInstallPrompt';
 
 const ENTERED_KEY = 'cw.entered';
 const SIDEBAR_WIDTH = 238;
@@ -401,6 +402,8 @@ export default function App() {
 
 function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick: () => void }) {
   const logged = me?.accountType === 'REGISTERED';
+  const { canInstall, installed, isIOS, promptInstall } = useInstallPrompt();
+
   return (
     <div style={{ maxWidth: 480 }}>
       <div className="cw-display" style={{ fontSize: 26 }}>Configurações</div>
@@ -429,6 +432,47 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
           {logged ? 'Sair da conta' : 'Entrar ou criar conta'}
         </div>
       </div>
+
+      {!installed && (
+        <div style={{ marginTop: 16, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
+          <div style={{ font: '700 13px Figtree' }}>Instalar como app</div>
+          <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 6 }}>
+            Coloca o Carra Wave na tela inicial do seu celular pra abrir direto, como um app — sem digitar o endereço no navegador.
+          </div>
+
+          {canInstall && (
+            <div
+              onClick={() => promptInstall()}
+              style={{
+                cursor: 'pointer',
+                marginTop: 14,
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '9px 16px',
+                borderRadius: 999,
+                background: 'var(--accent)',
+                color: 'var(--onacc)',
+                font: '700 12.5px Figtree',
+              }}
+            >
+              Instalar app
+            </div>
+          )}
+
+          {!canInstall && isIOS && (
+            <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
+              No iPhone: toque no ícone de compartilhar do Safari (o quadrado com a flecha pra cima, na barra de baixo) e escolha <strong>"Adicionar à Tela de Início"</strong>.
+            </div>
+          )}
+
+          {!canInstall && !isIOS && (
+            <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
+              No menu do navegador (geralmente os três pontinhos, no canto da tela), procure por <strong>"Instalar app"</strong> ou <strong>"Adicionar à tela inicial"</strong>.
+            </div>
+          )}
+        </div>
+      )}
+
       <div style={{ marginTop: 16, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>
         Suas preferências de tema, qualidade de áudio e reprodução automática podem ser ajustadas na versão mobile e sincronizam com esta conta.
       </div>
