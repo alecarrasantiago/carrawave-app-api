@@ -5,14 +5,17 @@ import { StationRow } from './components/StationRow';
 import { PlayerBar } from './components/PlayerBar';
 import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
+import { WelcomeGate } from './components/WelcomeGate';
 import { GridIcon, ListIcon, SearchIcon, LockIcon } from './components/icons';
 import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, removeFavorite, searchStations } from './api/catalog';
 import { logout } from './api/auth';
+import { storage } from './api/storage';
 import type { CitySummary, GenreSummary, MeResponse, StationSummary } from './api/types';
 import { usePlayerStore } from './store/playerStore';
 import { audioEngine, type PlaybackSource } from './audio/AudioEngine';
 import { useIsMobile } from './hooks/useIsMobile';
 
+const ENTERED_KEY = 'cw.entered';
 const SIDEBAR_WIDTH = 238;
 // Altura reservada pra barra de navegação inferior no mobile (conteúdo +
 // uma margem generosa pra cobrir a safe-area do notch/home-indicator do
@@ -51,6 +54,7 @@ export default function App() {
   const [favorites, setFavorites] = useState<StationSummary[]>([]);
   const [history, setHistory] = useState<StationSummary[]>([]);
   const [authOpen, setAuthOpen] = useState(false);
+  const [entered, setEntered] = useState(() => storage.get(ENTERED_KEY) === '1');
 
   const isMobile = useIsMobile();
 
@@ -76,6 +80,10 @@ export default function App() {
   }
 
   useEffect(() => {
+    // Só chamamos a API (e, com isso, criamos a sessão anônima no banco) depois
+    // que a pessoa passar pela tela inicial e escolher "visitante" ou entrar —
+    // assim nenhum registro é criado no banco antes de uma escolha explícita.
+    if (!entered) return;
     (async () => {
       try {
         const [c, g, meRes] = await Promise.all([fetchCities(), fetchGenres(), fetchMe()]);
@@ -87,9 +95,10 @@ export default function App() {
         setLoadError('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
       }
     })();
-  }, []);
+  }, [entered]);
 
   useEffect(() => {
+    if (!entered) return;
     if (nav === 'settings') return;
     if (nav === 'fav') {
       setStations(favorites);
@@ -125,7 +134,7 @@ export default function App() {
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nav, chip, query, cities, genres, favorites]);
+  }, [entered, nav, chip, query, cities, genres, favorites]);
 
   function isFavorited(stationId: string) {
     return favIds.has(stationId);
@@ -188,10 +197,29 @@ export default function App() {
 
   async function handleAuthSuccess(info?: { favoritesMoved: number; sessionsMoved: number }) {
     setAuthOpen(false);
+    markEntered();
     const meRes = await fetchMe();
     setMe(meRes);
     await refreshFavorites();
     usePlayerStore.getState().showToast(info && info.favoritesMoved > 0 ? `Conectado — ${info.favoritesMoved} favoritas migradas` : 'Conectado');
+  }
+
+  function markEntered() {
+    storage.set(ENTERED_KEY, '1');
+    setEntered(true);
+  }
+
+  function handleContinueAsGuest() {
+    markEntered();
+  }
+
+  if (!entered) {
+    return (
+      <>
+        <WelcomeGate onContinueAsGuest={handleContinueAsGuest} onOpenAuth={() => setAuthOpen(true)} />
+        {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onSuccess={handleAuthSuccess} />}
+      </>
+    );
   }
 
   const pageTitle = TITLES[nav];

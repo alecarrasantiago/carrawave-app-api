@@ -48,9 +48,13 @@ class AudioEngine {
     // "blocked by CORS policy" mesmo a URL sendo válida (200 OK).
 
     this.audio.addEventListener('waiting', () => usePlayerStore.getState().setBuffering(true));
-    this.audio.addEventListener('playing', () => usePlayerStore.getState().setBuffering(false));
+    this.audio.addEventListener('playing', () => {
+      usePlayerStore.getState().setBuffering(false);
+      this.setMediaSessionPlaybackState('playing');
+    });
     this.audio.addEventListener('canplay', () => usePlayerStore.getState().setBuffering(false));
     this.audio.addEventListener('pause', () => {
+      this.setMediaSessionPlaybackState('paused');
       // Só reflete no estado se não fomos nós que pausamos via troca de fonte.
       if (usePlayerStore.getState().isPlaying) {
         usePlayerStore.getState().setPlaying(false);
@@ -64,6 +68,7 @@ class AudioEngine {
     });
 
     this.applyVolume();
+    this.setupMediaSession();
   }
 
   private applyVolume() {
@@ -83,9 +88,57 @@ class AudioEngine {
     }
   }
 
+  /**
+   * Media Session API: mostra nome da rádio + controles de play/pause na
+   * tela de bloqueio e nos controles de mídia do sistema (Android/desktop;
+   * no iOS o Safari também usa isso quando o site está aberto ou instalado
+   * na tela de início). Sem isso, o navegador não sabe que existe uma
+   * "mídia" tocando e o sistema tende a suspender o áudio mais rápido em
+   * segundo plano.
+   */
+  private setupMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+
+    navigator.mediaSession.setActionHandler('play', () => {
+      usePlayerStore.getState().setPlaying(true);
+      this.play();
+    });
+    navigator.mediaSession.setActionHandler('pause', () => {
+      this.pause('USER_STOP');
+      usePlayerStore.getState().setPlaying(false);
+    });
+    navigator.mediaSession.setActionHandler('stop', () => {
+      this.pause('USER_STOP');
+      usePlayerStore.getState().setPlaying(false);
+    });
+  }
+
+  private setMediaSessionPlaybackState(state: 'playing' | 'paused' | 'none') {
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = state;
+    }
+  }
+
+  private updateMediaSessionMetadata(station: StationSummary) {
+    if (!('mediaSession' in navigator) || typeof MediaMetadata === 'undefined') return;
+    const artwork = station.artworkUrl
+      ? [{ src: station.artworkUrl, sizes: '512x512', type: 'image/png' }]
+      : [
+          { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
+        ];
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: station.name,
+      artist: `${station.frequency} · ${station.city.name}`,
+      album: 'Carra Wave',
+      artwork,
+    });
+  }
+
   async load(station: StationSummary, source: PlaybackSource = 'EXPLORE') {
     this.teardownHls();
     this.stopTelemetry('SWITCHED_STATION');
+    this.updateMediaSessionMetadata(station);
 
     if (station.streamFormat === 'HLS') {
       // hls.js só é baixado quando alguma estação realmente precisa dele —
@@ -128,6 +181,7 @@ class AudioEngine {
 
   /** Retoma a estação atual (após pausa manual), abrindo uma nova sessão de telemetria. */
   async resume(station: StationSummary, source: PlaybackSource = 'MINI_PLAYER') {
+    this.updateMediaSessionMetadata(station);
     await this.play();
     if (!this.currentSessionId) {
       this.startTelemetry(station, source);
