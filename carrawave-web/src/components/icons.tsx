@@ -1,0 +1,97 @@
+// Ícones inline (mesmos paths do design original) — sem dependência de
+// biblioteca de ícones externa, para manter o bundle enxuto.
+import type { CSSProperties } from 'react';
+
+interface IconProps {
+  size?: number;
+  color?: string;
+  style?: CSSProperties;
+}
+
+export function HeartIcon({ size = 17, filled, color = 'currentColor', style }: IconProps & { filled: boolean }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={style} fill={filled ? color : 'none'} stroke={filled ? 'none' : color} strokeWidth={2.4} strokeLinejoin="round">
+      <path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z" />
+    </svg>
+  );
+}
+
+export function PlayIcon({ size = 15, color = 'currentColor', style }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={style} fill={color}>
+      <path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z" />
+    </svg>
+  );
+}
+
+export function PauseIcon({ width = 4, height = 17, color = 'currentColor', gap = 4 }: { width?: number; height?: number; color?: string; gap?: number }) {
+  return (
+    <div style={{ display: 'flex', gap }}>
+      <div style={{ width, height, borderRadius: 2, background: color }} />
+      <div style={{ width, height, borderRadius: 2, background: color }} />
+    </div>
+  );
+}
+
+export function SearchIcon({ size = 16, color = 'var(--ink40)', style }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" style={style} fill="none" stroke={color} strokeWidth={2.75} strokeLinecap="round">
+      <circle cx="11" cy="11" r="7" />
+      <path d="M16.5 16.5L21 21" />
+    </svg>
+  );
+}
+
+export function GridIcon({ size = 15, color = 'var(--ink)' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.6} strokeLinejoin="round">
+      <rect x="3.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="13.5" y="3.5" width="7" height="7" rx="2" />
+      <rect x="3.5" y="13.5" width="7" height="7" rx="2" />
+      <rect x="13.5" y="13.5" width="7" height="7" rx="2" />
+    </svg>
+  );
+}
+
+export function ListIcon({ size = 15, color = 'var(--ink)' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.75} strokeLinecap="round">
+      <path d="M4 6.5h16M4 12h16M4 17.5h16" />
+    </svg>
+  );
+}
+
+export function ClockIcon({ size = 15, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.6} strokeLinecap="round">
+      <circle cx="12" cy="13.5" r="7.5" />
+      <path d="M12 9.8v3.7l2.4 1.6" />
+    </svg>
+  );
+}
+
+export function VolumeIcon({ size = 17, color = 'var(--ink60)' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.6} strokeLinecap="round">
+      <path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z" />
+      <path d="M16 9.5a3.5 3.5 0 010 5" />
+    </svg>
+  );
+}
+
+export function LockIcon({ size = 12, color = 'var(--accent-2)' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.75} strokeLinecap="round">
+      <rect x="5" y="11" width="14" height="9.5" rx="2.5" />
+      <path d="M8.5 11V8a3.5 3.5 0 017 0v3" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ size = 17, color = 'var(--accent)' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12.5l4.5 4.5L19 7" />
+    </svg>
+  );
+}

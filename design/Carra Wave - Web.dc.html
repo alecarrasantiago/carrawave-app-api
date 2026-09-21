@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e6ddcc;font-family:Figtree,system-ui,sans-serif}
+a{color:#8c491a;text-decoration:none}a:hover{color:#643312}
+@keyframes cwwave{0%,100%{transform:scaleY(.22)}50%{transform:scaleY(1)}}
+@keyframes cwpulse{0%,100%{opacity:1}50%{opacity:.3}}
+@keyframes cwin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.cw-sc::-webkit-scrollbar{width:9px;height:9px}
+.cw-sc::-webkit-scrollbar-thumb{background:rgba(32,30,29,.2);border-radius:9px}
+</style>
+</helmet>
+
+<div style="--bg:#f5ead8;--surf:#fffaf1;--surf2:#ebddc5;--ink:#201e1d;--ink60:rgba(32,30,29,.62);--ink40:rgba(32,30,29,.42);--line:rgba(32,30,29,.14);--accent:#c67139;--accent-2:#7a8a5e;--accent-soft:rgba(198,113,57,.13);--accent-ink:#8c491a;--onacc:#fffaf1;--shadow-md:0 4px 14px rgba(46,43,37,.16);padding:28px 30px 60px;box-sizing:border-box;font-family:Figtree,system-ui,sans-serif;color:#201e1d;-webkit-font-smoothing:antialiased">
+
+  <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap">
+    <span style="font:400 22px Caprasimo,serif">Carra Wave · Web</span>
+    <span style="font:500 13px Figtree;color:rgba(32,30,29,.55)">Sua sintonia, em qualquer lugar. — desktop, mobile e extensão do Chrome</span>
+  </div>
+
+  <!-- ─────────── 01 · DESKTOP ─────────── -->
+  <div style="margin-top:24px;font:600 11.5px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(32,30,29,.45)">01 · Web app — desktop</div>
+
+  <div style="margin-top:14px;border-radius:26px;overflow:hidden;background:var(--bg);box-shadow:0 22px 54px -24px rgba(46,43,37,.5),0 0 0 1px rgba(32,30,29,.1)">
+    <div style="display:flex;align-items:center;gap:12px;padding:11px 16px;background:var(--surf2);border-bottom:1px solid var(--line)">
+      <div style="display:flex;gap:7px">
+        <div style="width:11px;height:11px;border-radius:999px;background:#e0705c"></div>
+        <div style="width:11px;height:11px;border-radius:999px;background:#e3b04b"></div>
+        <div style="width:11px;height:11px;border-radius:999px;background:#7a9b5e"></div>
+      </div>
+      <div style="flex:1;max-width:380px;height:28px;border-radius:999px;background:var(--surf);display:flex;align-items:center;gap:8px;padding:0 14px;font:500 12px Figtree;color:var(--ink60)">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2.75" stroke-linecap="round"><rect x="5" y="11" width="14" height="9.5" rx="2.5"></rect><path d="M8.5 11V8a3.5 3.5 0 017 0v3"></path></svg>
+        app.carrawave.com.br
+      </div>
+      <div style="flex:1"></div>
+      <div style="display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;background:var(--accent-soft);font:600 11.5px Figtree;color:var(--accent-ink)">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round"><circle cx="12" cy="12" r="3"></circle><path d="M8 8a5.6 5.6 0 000 8"></path><path d="M16 8a5.6 5.6 0 010 8"></path></svg>
+        Extensão instalada
+      </div>
+    </div>
+
+    <div style="display:flex;height:720px;position:relative">
+      <!-- sidebar -->
+      <div style="flex:none;width:238px;border-right:1px solid var(--line);background:var(--surf);display:flex;flex-direction:column;padding:22px 16px 0">
+        <div style="display:flex;align-items:center;gap:10px;padding:0 6px">
+          <div style="width:36px;height:36px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center">
+            <svg width="20" height="20" viewBox="0 0 32 32" fill="none" stroke="var(--onacc)" stroke-width="2.75" stroke-linecap="round"><circle cx="16" cy="16" r="3.2" fill="var(--onacc)" stroke="none"></circle><path d="M10.2 10.2a8.2 8.2 0 000 11.6"></path><path d="M21.8 10.2a8.2 8.2 0 010 11.6"></path></svg>
+          </div>
+          <span style="font:400 18px Caprasimo,serif">Carra Wave</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:3px;margin-top:24px">
+          <sc-for list="{{ nav }}" as="n" hint-placeholder-count="5">
+            <div onClick="{{ n.onPick }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:999px;background:{{ n.bg }};color:{{ n.fg }};font:700 13.5px Figtree" style-hover="filter:brightness(.97)">{{ n.label }}</div>
+          </sc-for>
+        </div>
+        <div style="margin-top:24px;padding:0 8px;font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:var(--ink40)">Suas favoritas</div>
+        <div class="cw-sc" style="margin-top:10px;display:flex;flex-direction:column;gap:2px;overflow-y:auto;max-height:210px">
+          <sc-for list="{{ favNav }}" as="f" hint-placeholder-count="3">
+            <div onClick="{{ f.onPlay }}" style="cursor:pointer;display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:14px" style-hover="background:var(--surf2)">
+              <div style="flex:none;width:30px;height:30px;border-radius:10px;background:{{ f.g }};display:flex;align-items:center;justify-content:center;font:400 11px Caprasimo,serif;color:rgba(255,255,255,.95)">{{ f.ini }}</div>
+              <div style="flex:1;min-width:0;font:600 12.5px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.nome }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="flex:1;min-height:16px"></div>
+        <div style="margin:0 -16px;padding:13px 16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:10px">
+          <div style="flex:none;width:32px;height:32px;border-radius:999px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font:400 13px Caprasimo,serif;color:var(--accent-ink)">{{ acctIni }}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font:700 12.5px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ acctName }}</div>
+            <div style="font:500 10px 'IBM Plex Mono',monospace;color:var(--ink40);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ acctSub }}</div>
+          </div>
+          <div onClick="{{ toggleAuth }}" style="cursor:pointer;flex:none;padding:5px 10px;border-radius:999px;border:1.5px solid var(--line);font:600 11px Figtree;color:var(--ink60)" style-hover="background:var(--surf2)">{{ acctCta }}</div>
+        </div>
+      </div>
+
+      <!-- main -->
+      <div style="flex:1;min-width:0;display:flex;flex-direction:column">
+        <div style="flex:none;display:flex;align-items:center;gap:14px;padding:16px 26px;border-bottom:1px solid var(--line)">
+          <div style="flex:1;max-width:430px;display:flex;align-items:center;gap:11px;height:44px;padding:0 18px;border-radius:999px;background:var(--surf);border:1.5px solid var(--line)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+            <input value="{{ query }}" onChange="{{ onQuery }}" placeholder="Rádio, cidade ou gênero" style="flex:1;min-width:0;border:0;outline:none;background:transparent;font:500 14px Figtree;color:var(--ink)"></input>
+          </div>
+          <div style="flex:1"></div>
+          <div style="display:flex;gap:5px;padding:4px;border-radius:999px;background:var(--surf2)">
+            <div onClick="{{ setGrid }}" style="cursor:pointer;width:34px;height:30px;border-radius:999px;background:{{ gridBg }};display:flex;align-items:center;justify-content:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.6" stroke-linejoin="round"><rect x="3.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="3.5" width="7" height="7" rx="2"></rect><rect x="3.5" y="13.5" width="7" height="7" rx="2"></rect><rect x="13.5" y="13.5" width="7" height="7" rx="2"></rect></svg>
+            </div>
+            <div onClick="{{ setList }}" style="cursor:pointer;width:34px;height:30px;border-radius:999px;background:{{ listBg }};display:flex;align-items:center;justify-content:center">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="2.75" stroke-linecap="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"></path></svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="cw-sc" style="flex:1;min-height:0;overflow-y:auto;padding:24px 26px 110px">
+          <div style="display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap">
+            <div style="font:400 26px Caprasimo,serif;letter-spacing:-.01em">{{ pageTitle }}</div>
+            <div style="font:500 13px Figtree;color:var(--ink60)">{{ pageCount }}</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <sc-for list="{{ chips }}" as="c" hint-placeholder-count="6">
+              <div onClick="{{ c.onPick }}" style="cursor:pointer;padding:8px 16px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:600 12.5px Figtree" style-hover="filter:brightness(.97)">{{ c.nome }}</div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ isGrid }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(176px,1fr));gap:22px 18px;margin-top:24px">
+            <sc-for list="{{ list }}" as="st" hint-placeholder-count="8">
+              <div onClick="{{ st.onPlay }}" style="cursor:pointer;animation:cwin .3s ease">
+                <div style="position:relative;width:100%;aspect-ratio:1;border-radius:24px;background:{{ st.g }};display:flex;align-items:center;justify-content:center;font:400 38px Caprasimo,serif;color:rgba(255,255,255,.95);box-shadow:var(--shadow-md)" style-hover="transform:translateY(-3px)">
+                  {{ st.ini }}
+                  <div style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:5px;padding:4px 9px;border-radius:999px;background:rgba(24,16,10,.5)">
+                    <div style="width:5px;height:5px;border-radius:999px;background:#ffd7bd;animation:cwpulse 1.5s infinite"></div>
+                    <span style="font:500 8.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#fff">AO VIVO</span>
+                  </div>
+                  <div onClick="{{ st.onFav }}" style="position:absolute;top:8px;right:8px;width:28px;height:28px;display:flex;align-items:center;justify-content:center">
+                    <sc-if value="{{ st.fav }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="#fff"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+                    <sc-if value="{{ st.nofav }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.92)" stroke-width="2.4" stroke-linejoin="round"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+                  </div>
+                  <div style="position:absolute;right:10px;bottom:10px;width:38px;height:38px;border-radius:999px;background:var(--bg);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 14px rgba(24,16,10,.3)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--ink)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+                  </div>
+                </div>
+                <div style="font:700 14px Figtree;margin-top:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.nome }}</div>
+                <div style="font:500 12px Figtree;color:var(--ink60);margin-top:2px">{{ st.freq }} · {{ st.cidade }}</div>
+              </div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ isList }}">
+          <div style="margin-top:20px;display:flex;flex-direction:column">
+            <sc-for list="{{ list }}" as="st" hint-placeholder-count="8">
+              <div onClick="{{ st.onPlay }}" style="cursor:pointer;display:flex;align-items:center;gap:15px;padding:11px 12px;margin:0 -12px;border-radius:20px" style-hover="background:var(--surf)">
+                <div style="flex:none;width:52px;height:52px;border-radius:17px;background:{{ st.g }};display:flex;align-items:center;justify-content:center;font:400 17px Caprasimo,serif;color:rgba(255,255,255,.95)">{{ st.ini }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font:700 14.5px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.nome }}</div>
+                  <div style="font:500 12.5px Figtree;color:var(--ink60);margin-top:2px">{{ st.freq }} · {{ st.cidade }}</div>
+                </div>
+                <div style="flex:none;width:100px;font:500 12.5px Figtree;color:var(--ink60)">{{ st.genero }}</div>
+                <div style="flex:none;width:96px;font:500 12.5px Figtree;color:var(--ink40)">{{ st.ouvintes }}</div>
+                <div onClick="{{ st.onFav }}" style="flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:999px" style-hover="background:var(--accent-soft)">
+                  <sc-if value="{{ st.fav }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+                  <sc-if value="{{ st.nofav }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.4" stroke-linejoin="round"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+                </div>
+                <div style="flex:none;width:38px;height:38px;border-radius:999px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center" style-hover="background:var(--accent);border-color:var(--accent)">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--ink)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+                </div>
+              </div>
+              <div style="height:1px;background:var(--line);margin-left:67px"></div>
+            </sc-for>
+          </div>
+          </sc-if>
+
+          <sc-if value="{{ isEmpty }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:80px 40px">
+            <div style="width:96px;height:96px;border-radius:999px;background:var(--surf2);display:flex;align-items:center;justify-content:center">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.4" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+            </div>
+            <div style="font:400 21px Caprasimo,serif;margin-top:22px">Nenhuma rádio encontrada.</div>
+            <div style="font:500 14px Figtree;color:var(--ink60);margin-top:9px">Tente outro nome, cidade ou gênero.</div>
+          </div>
+          </sc-if>
+        </div>
+      </div>
+
+      <!-- now playing bar -->
+      <div style="position:absolute;left:238px;right:0;bottom:0;display:flex;align-items:center;gap:20px;padding:12px 26px;background:var(--surf);border-top:1px solid var(--line);box-shadow:0 -8px 26px -18px rgba(46,43,37,.6)">
+        <div style="flex:none;width:52px;height:52px;border-radius:17px;background:{{ playBg }};display:flex;align-items:center;justify-content:center;font:400 18px Caprasimo,serif;color:rgba(255,255,255,.95)">{{ playing.ini }}</div>
+        <div style="flex:none;width:190px;min-width:0">
+          <div style="font:700 14px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ playing.nome }}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+            <div style="flex:none;width:5px;height:5px;border-radius:999px;background:var(--accent);animation:cwpulse 1.5s infinite"></div>
+            <span style="font:500 12px Figtree;color:var(--ink60);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ao vivo · {{ playing.cidade }}</span>
+          </div>
+        </div>
+        <div onClick="{{ favPlaying }}" style="cursor:pointer;flex:none;width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center" style-hover="background:var(--accent-soft)">
+          <sc-if value="{{ playFav }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+          <sc-if value="{{ playNofav }}"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.4" stroke-linejoin="round"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div onClick="{{ togglePlay }}" style="cursor:pointer;width:50px;height:50px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 8px 20px -10px var(--accent)" style-hover="filter:brightness(.94)">
+            <sc-if value="{{ isPlaying }}">
+              <div style="width:4px;height:17px;border-radius:2px;background:var(--onacc)"></div>
+              <div style="width:4px;height:17px;border-radius:2px;background:var(--onacc)"></div>
+            </sc-if>
+            <sc-if value="{{ isPaused }}">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--onacc)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+            </sc-if>
+          </div>
+          <div style="display:flex;align-items:flex-end;gap:3px;height:20px;opacity:{{ waveOpacity }}">
+            <div style="width:3px;height:100%;border-radius:9px;background:var(--accent);animation:cwwave 1.1s infinite ease-in-out"></div>
+            <div style="width:3px;height:100%;border-radius:9px;background:var(--accent);animation:cwwave 1.1s .12s infinite ease-in-out"></div>
+            <div style="width:3px;height:100%;border-radius:9px;background:var(--accent-2);animation:cwwave 1.1s .24s infinite ease-in-out"></div>
+            <div style="width:3px;height:100%;border-radius:9px;background:var(--accent);animation:cwwave 1.1s .36s infinite ease-in-out"></div>
+            <div style="width:3px;height:100%;border-radius:9px;background:var(--accent);animation:cwwave 1.1s .48s infinite ease-in-out"></div>
+          </div>
+        </div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:11px;flex:none;width:170px">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ink60)" stroke-width="2.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"></path><path d="M16 9.5a3.5 3.5 0 010 5"></path></svg>
+          <div style="flex:1;height:5px;border-radius:999px;background:var(--surf2);position:relative">
+            <div style="position:absolute;left:0;top:0;bottom:0;width:68%;border-radius:999px;background:var(--accent)"></div>
+            <div style="position:absolute;left:68%;top:-5px;width:15px;height:15px;border-radius:999px;background:var(--accent);transform:translateX(-50%);box-shadow:0 2px 6px rgba(24,16,10,.3)"></div>
+          </div>
+        </div>
+        <div onClick="{{ openTimer }}" style="cursor:pointer;flex:none;display:flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;background:{{ timerChipBg }};font:600 12px Figtree;color:{{ timerColor }}" style-hover="filter:brightness(.97)">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13.5" r="7.5"></circle><path d="M12 9.8v3.7l2.4 1.6"></path></svg>
+          {{ timerLabel }}
+        </div>
+      </div>
+
+      <!-- timer popover -->
+      <sc-if value="{{ timerOpen }}">
+      <div style="position:absolute;inset:0;z-index:30;display:flex;align-items:flex-end;justify-content:flex-end;padding:0 26px 88px">
+        <div onClick="{{ closeTimer }}" style="position:absolute;inset:0;background:rgba(24,16,10,.28)"></div>
+        <div style="position:relative;width:268px;border-radius:24px;background:var(--surf);border:1.5px solid var(--line);box-shadow:0 20px 44px -18px rgba(46,43,37,.6);padding:16px;animation:cwin .2s ease">
+          <div style="font:400 18px Caprasimo,serif">Temporizador</div>
+          <div style="font:500 12px Figtree;color:var(--ink60);margin-top:4px">A reprodução para no fim do tempo.</div>
+          <div style="display:flex;flex-direction:column;gap:2px;margin-top:12px">
+            <sc-for list="{{ timerOptions }}" as="t" hint-placeholder-count="5">
+              <div onClick="{{ t.onPick }}" style="cursor:pointer;display:flex;align-items:center;justify-content:space-between;padding:11px 13px;border-radius:16px;background:{{ t.bg }};font:600 13.5px Figtree;color:{{ t.fg }}" style-hover="background:var(--surf2)">
+                {{ t.label }}
+                <sc-if value="{{ t.on }}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"></path></svg></sc-if>
+              </div>
+            </sc-for>
+          </div>
+          <div onClick="{{ clearTimer }}" style="cursor:pointer;margin-top:10px;height:42px;border-radius:999px;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font:600 13px Figtree;color:var(--ink60)" style-hover="background:var(--surf2)">Desativar</div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ toast }}">
+      <div style="position:absolute;left:238px;right:0;bottom:96px;z-index:40;display:flex;justify-content:center;pointer-events:none">
+        <div style="padding:10px 20px;border-radius:999px;background:var(--ink);color:var(--bg);font:600 13px Figtree;animation:cwin .22s ease">{{ toast }}</div>
+      </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <!-- ─────────── 02 · MOBILE WEB + EXTENSÃO ─────────── -->
+  <div style="margin-top:44px;font:600 11.5px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;color:rgba(32,30,29,.45)">02 · Web mobile e extensão do Chrome</div>
+
+  <div style="display:flex;flex-wrap:wrap;gap:30px;margin-top:16px;align-items:flex-start">
+
+    <!-- mobile web -->
+    <div style="flex:none;display:flex;flex-direction:column;gap:11px">
+      <div style="font:700 12px Figtree;color:rgba(32,30,29,.7)">WEB MOBILE · 390px</div>
+      <div style="width:390px;border-radius:26px;overflow:hidden;background:var(--bg);box-shadow:0 20px 48px -22px rgba(46,43,37,.5),0 0 0 1px rgba(32,30,29,.1)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;background:var(--surf2);border-bottom:1px solid var(--line)">
+          <div style="flex:1;height:26px;border-radius:999px;background:var(--surf);display:flex;align-items:center;gap:7px;padding:0 12px;font:500 11.5px Figtree;color:var(--ink60)">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2.75" stroke-linecap="round"><rect x="5" y="11" width="14" height="9.5" rx="2.5"></rect><path d="M8.5 11V8a3.5 3.5 0 017 0v3"></path></svg>
+            app.carrawave.com.br
+          </div>
+        </div>
+        <div style="height:640px;display:flex;flex-direction:column">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:16px 20px 0">
+            <div style="display:flex;align-items:center;gap:9px">
+              <div style="width:32px;height:32px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none" stroke="var(--onacc)" stroke-width="2.75" stroke-linecap="round"><circle cx="16" cy="16" r="3.2" fill="var(--onacc)" stroke="none"></circle><path d="M10.2 10.2a8.2 8.2 0 000 11.6"></path><path d="M21.8 10.2a8.2 8.2 0 010 11.6"></path></svg>
+              </div>
+              <span style="font:400 17px Caprasimo,serif">Carra Wave</span>
+            </div>
+            <div style="width:36px;height:36px;border-radius:999px;background:var(--surf2);display:flex;align-items:center;justify-content:center;font:400 14px Caprasimo,serif;color:var(--accent-ink)">{{ acctIni }}</div>
+          </div>
+          <div style="flex:none;margin:16px 20px 0;display:flex;align-items:center;gap:10px;height:44px;padding:0 16px;border-radius:999px;background:var(--surf);border:1.5px solid var(--line)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.75" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="M16.5 16.5L21 21"></path></svg>
+            <span style="font:500 13.5px Figtree;color:var(--ink40)">Rádio, cidade ou gênero</span>
+          </div>
+          <div style="flex:none;display:flex;gap:7px;padding:16px 20px 12px;overflow:hidden">
+            <sc-for list="{{ chipsMob }}" as="c" hint-placeholder-count="4">
+              <div style="flex:none;padding:8px 14px;border-radius:999px;border:1.5px solid {{ c.bd }};background:{{ c.bg }};color:{{ c.fg }};font:600 12px Figtree">{{ c.nome }}</div>
+            </sc-for>
+          </div>
+          <div class="cw-sc" style="flex:1;min-height:0;overflow-y:auto;padding:0 20px 16px">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 14px">
+              <sc-for list="{{ mobileList }}" as="st" hint-placeholder-count="6">
+                <div onClick="{{ st.onPlay }}" style="cursor:pointer">
+                  <div style="position:relative;width:100%;aspect-ratio:1;border-radius:22px;background:{{ st.g }};display:flex;align-items:center;justify-content:center;font:400 32px Caprasimo,serif;color:rgba(255,255,255,.95)">
+                    {{ st.ini }}
+                    <div style="position:absolute;top:8px;left:8px;padding:3px 7px;border-radius:999px;background:rgba(24,16,10,.5);font:500 7.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:#fff">AO VIVO</div>
+                    <div style="position:absolute;right:8px;bottom:8px;width:32px;height:32px;border-radius:999px;background:var(--bg);display:flex;align-items:center;justify-content:center">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--ink)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+                    </div>
+                  </div>
+                  <div style="font:700 13px Figtree;margin-top:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.nome }}</div>
+                  <div style="font:500 11.5px Figtree;color:var(--ink60);margin-top:2px">{{ st.freq }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="flex:none;padding:0 12px 8px">
+            <div style="display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:20px;background:var(--surf);border:1.5px solid var(--line);box-shadow:var(--shadow-md)">
+              <div style="flex:none;width:40px;height:40px;border-radius:14px;background:{{ playBg }};display:flex;align-items:center;justify-content:center;font:400 14px Caprasimo,serif;color:rgba(255,255,255,.95)">{{ playing.ini }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font:700 13.5px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ playing.nome }}</div>
+                <div style="font:500 11.5px Figtree;color:var(--ink60);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Ao vivo · {{ playing.cidade }}</div>
+              </div>
+              <div onClick="{{ togglePlay }}" style="cursor:pointer;flex:none;width:38px;height:38px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center;gap:3px">
+                <sc-if value="{{ isPlaying }}">
+                  <div style="width:3.5px;height:13px;border-radius:2px;background:var(--onacc)"></div>
+                  <div style="width:3.5px;height:13px;border-radius:2px;background:var(--onacc)"></div>
+                </sc-if>
+                <sc-if value="{{ isPaused }}">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--onacc)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+                </sc-if>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;display:flex;padding:6px 14px 14px;border-top:1px solid var(--line)">
+            <sc-for list="{{ tabBar }}" as="t" hint-placeholder-count="4">
+              <div onClick="{{ t.onPick }}" style="cursor:pointer;flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:7px 0;color:{{ t.c }};font:700 10px Figtree">{{ t.label }}</div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- chrome extension popup -->
+    <div style="flex:none;display:flex;flex-direction:column;gap:11px">
+      <div style="font:700 12px Figtree;color:rgba(32,30,29,.7)">EXTENSÃO · POPUP 360×520</div>
+      <div style="position:relative;width:360px;border-radius:16px;overflow:hidden;background:var(--bg);box-shadow:0 20px 48px -22px rgba(46,43,37,.55),0 0 0 1px rgba(32,30,29,.12)">
+        <div style="padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);background:var(--surf)">
+          <div style="width:30px;height:30px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center">
+            <svg width="17" height="17" viewBox="0 0 32 32" fill="none" stroke="var(--onacc)" stroke-width="2.75" stroke-linecap="round"><circle cx="16" cy="16" r="3.2" fill="var(--onacc)" stroke="none"></circle><path d="M10.2 10.2a8.2 8.2 0 000 11.6"></path><path d="M21.8 10.2a8.2 8.2 0 010 11.6"></path></svg>
+          </div>
+          <span style="flex:1;font:400 16px Caprasimo,serif">Carra Wave</span>
+          <div style="padding:4px 9px;border-radius:999px;background:var(--accent-soft);font:600 9.5px 'IBM Plex Mono',monospace;letter-spacing:.06em;color:var(--accent-ink)">{{ acctBadge }}</div>
+        </div>
+
+        <div style="padding:16px">
+          <div style="display:flex;align-items:center;gap:13px">
+            <div style="flex:none;width:64px;height:64px;border-radius:20px;background:{{ playBg }};display:flex;align-items:center;justify-content:center;font:400 22px Caprasimo,serif;color:rgba(255,255,255,.95);box-shadow:var(--shadow-md)">{{ playing.ini }}</div>
+            <div style="flex:1;min-width:0">
+              <div style="display:flex;align-items:center;gap:6px">
+                <div style="width:5px;height:5px;border-radius:999px;background:var(--accent);animation:cwpulse 1.5s infinite"></div>
+                <span style="font:500 8.5px 'IBM Plex Mono',monospace;letter-spacing:.1em;color:var(--accent-ink)">AO VIVO</span>
+              </div>
+              <div style="font:400 19px Caprasimo,serif;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ playing.nome }}</div>
+              <div style="font:500 12px Figtree;color:var(--ink60);margin-top:2px">{{ playing.freq }} · {{ playing.cidade }}</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:12px;margin-top:16px">
+            <div onClick="{{ togglePlay }}" style="cursor:pointer;flex:none;width:48px;height:48px;border-radius:999px;background:var(--accent);display:flex;align-items:center;justify-content:center;gap:4px;box-shadow:0 8px 18px -9px var(--accent)" style-hover="filter:brightness(.94)">
+              <sc-if value="{{ isPlaying }}">
+                <div style="width:4px;height:16px;border-radius:2px;background:var(--onacc)"></div>
+                <div style="width:4px;height:16px;border-radius:2px;background:var(--onacc)"></div>
+              </sc-if>
+              <sc-if value="{{ isPaused }}">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="var(--onacc)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+              </sc-if>
+            </div>
+            <div style="flex:1;display:flex;align-items:center;gap:9px">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--ink60)" stroke-width="2.6" stroke-linecap="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"></path><path d="M16 9.5a3.5 3.5 0 010 5"></path></svg>
+              <div style="flex:1;height:5px;border-radius:999px;background:var(--surf2);position:relative">
+                <div style="position:absolute;left:0;top:0;bottom:0;width:68%;border-radius:999px;background:var(--accent)"></div>
+                <div style="position:absolute;left:68%;top:-4px;width:13px;height:13px;border-radius:999px;background:var(--accent);transform:translateX(-50%)"></div>
+              </div>
+            </div>
+            <div onClick="{{ favPlaying }}" style="cursor:pointer;flex:none;width:34px;height:34px;border-radius:999px;display:flex;align-items:center;justify-content:center" style-hover="background:var(--accent-soft)">
+              <sc-if value="{{ playFav }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--accent)"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+              <sc-if value="{{ playNofav }}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ink40)" stroke-width="2.4" stroke-linejoin="round"><path d="M12 20.3S3.8 15 3.8 9.4A4.6 4.6 0 0112 7.3a4.6 4.6 0 018.2 2.1c0 5.6-8.2 10.9-8.2 10.9z"></path></svg></sc-if>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding:9px 12px;border-radius:14px;background:var(--accent-soft)">
+            <svg style="flex:none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-ink)" stroke-width="2.6" stroke-linecap="round"><path d="M12 3v10"></path><path d="M8.5 6.5L12 3l3.5 3.5"></path><circle cx="12" cy="17.5" r="3.5"></circle></svg>
+            <span style="font:600 11px/1.45 Figtree;color:var(--accent-ink)">Tocando em segundo plano — continua mesmo com o popup fechado.</span>
+          </div>
+
+          <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:18px">
+            <span style="font:700 12px Figtree">Acesso rápido</span>
+            <span style="font:600 11px Figtree;color:var(--accent-ink);cursor:pointer">Abrir app ↗</span>
+          </div>
+          <div class="cw-sc" style="margin-top:9px;display:flex;flex-direction:column;gap:1px;max-height:176px;overflow-y:auto;overflow-x:hidden">
+            <sc-for list="{{ extList }}" as="st" hint-placeholder-count="4">
+              <div onClick="{{ st.onPlay }}" style="cursor:pointer;display:flex;align-items:center;gap:11px;padding:8px;margin:0 -8px;border-radius:14px" style-hover="background:var(--surf)">
+                <div style="flex:none;width:36px;height:36px;border-radius:12px;background:{{ st.g }};display:flex;align-items:center;justify-content:center;font:400 13px Caprasimo,serif;color:rgba(255,255,255,.95)">{{ st.ini }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font:700 12.5px Figtree;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ st.nome }}</div>
+                  <div style="font:500 11px Figtree;color:var(--ink60);margin-top:1px">{{ st.freq }} · {{ st.cidade }}</div>
+                </div>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--ink40)"><path d="M8 5.4a1 1 0 011.5-.87l9 6.6a1 1 0 010 1.74l-9 6.6A1 1 0 018 18.6z"></path></svg>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:360px;padding:13px 15px;border-radius:18px;background:rgba(32,30,29,.06);font:500 11.5px/1.65 Figtree;color:rgba(32,30,29,.62);box-sizing:border-box">
+        <b style="color:#201e1d">MV3:</b> o popup é destruído ao perder o foco — o <code style="font:500 11px 'IBM Plex Mono',monospace">&lt;audio&gt;</code> vive num <i>offscreen document</i> (<code style="font:500 11px 'IBM Plex Mono',monospace">reason: AUDIO_PLAYBACK</code>). Heartbeat por <code style="font:500 11px 'IBM Plex Mono',monospace">chrome.alarms</code>, tokens em <code style="font:500 11px 'IBM Plex Mono',monospace">chrome.storage.local</code>. Detalhes na seção 8 do contrato de API.
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const GR = [
+  'linear-gradient(145deg,#f6a06b,#b2622d)','linear-gradient(145deg,#aebf92,#56633f)',
+  'linear-gradient(145deg,#ffc6a5,#d67f48)','linear-gradient(145deg,#c0b6a5,#5a5246)',
+  'linear-gradient(145deg,#d67f48,#643312)','linear-gradient(145deg,#ccdbb2,#728157)',
+  'linear-gradient(145deg,#f6a06b,#8c491a)','linear-gradient(145deg,#8fa073,#3d472b)'
+];
+const RAW = [
+  ['jb','JB FM','99.9 FM','Rio de Janeiro','RJ','MPB','JB',0,'12,4 mil ouvindo'],
+  ['odia','FM O Dia','100.5 FM','Rio de Janeiro','RJ','Pagode','OD',4,'9,8 mil ouvindo'],
+  ['tupi','Super Rádio Tupi','96.5 FM','Rio de Janeiro','RJ','Notícias','TU',3,'8,1 mil ouvindo'],
+  ['melodia','Melodia','97.5 FM','Rio de Janeiro','RJ','Gospel','ME',1,'7,6 mil ouvindo'],
+  ['n93','93 FM','93.3 FM','Rio de Janeiro','RJ','Pop','93',2,'11,2 mil ouvindo'],
+  ['mixrio','Mix Rio FM','102.1 FM','Rio de Janeiro','RJ','Pop','MX',6,'10,5 mil ouvindo'],
+  ['bandrio','Band FM Rio','102.9 FM','Rio de Janeiro','RJ','Sertanejo','BR',5,'6,9 mil ouvindo'],
+  ['alpha','Alpha FM','101.7 FM','São Paulo','SP','Flashback','AL',1,'14,1 mil ouvindo'],
+  ['bandfm','Band FM','96.1 FM','São Paulo','SP','Sertanejo','BF',0,'13,3 mil ouvindo'],
+  ['antena1','Antena 1','94.7 FM','São Paulo','SP','Flashback','A1',7,'9,2 mil ouvindo'],
+  ['jovempan','Jovem Pan FM','100.9 FM','São Paulo','SP','Pop','JP',4,'15,7 mil ouvindo'],
+  ['mixsp','Mix FM São Paulo','106.3 FM','São Paulo','SP','Pop','MS',2,'12,9 mil ouvindo'],
+  ['nativa','Nativa FM','95.3 FM','São Paulo','SP','Sertanejo','NA',5,'8,7 mil ouvindo'],
+  ['bandeirantes','Rádio Bandeirantes','107.3 FM','São Paulo','SP','Notícias','BA',3,'7,4 mil ouvindo']
+];
+const ST = RAW.map(r => ({
+  id: r[0], nome: r[1], freq: r[2], cidade: r[3], uf: r[4], genero: r[5],
+  ini: r[6], g: GR[r[7]], ouvintes: r[8]
+}));
+const CHIPS = ['Todas','Rio de Janeiro','São Paulo','Pop','Sertanejo','Notícias','Gospel','MPB'];
+const NAV = [['home','Início'],['explore','Explorar'],['fav','Favoritos'],['recent','Recentes'],['settings','Configurações']];
+const TIMERS = ['15 minutos','30 minutos','45 minutos','1 hora','Fim do programa'];
+
+class Component extends DCLogic {
+  state = {
+    nav: 'home', chip: 'Todas', view: 'grid', query: '',
+    playingId: 'jb', isPlaying: true, timer: null, timerOpen: false,
+    favs: { jb: true, alpha: true, jovempan: true, mixrio: true },
+    logged: false, toast: ''
+  };
+  componentWillUnmount() { clearTimeout(this._t); }
+  flash(m) {
+    clearTimeout(this._t);
+    this.setState({ toast: m });
+    this._t = setTimeout(() => this.setState({ toast: '' }), 1600);
+  }
+  play(st) { this.setState({ playingId: st.id, isPlaying: true }); this.flash('Tocando ' + st.nome); }
+  fav(st) {
+    const on = !this.state.favs[st.id];
+    this.setState(s => { const f = Object.assign({}, s.favs); f[st.id] = on; return { favs: f }; });
+    this.flash(on ? st.nome + ' nos favoritos' : 'Removida dos favoritos');
+  }
+  wrap(list) {
+    return list.map(st => Object.assign({}, st, {
+      fav: !!this.state.favs[st.id], nofav: !this.state.favs[st.id],
+      onPlay: e => { if (e) e.stopPropagation(); this.play(st); },
+      onFav: e => { if (e) e.stopPropagation(); this.fav(st); }
+    }));
+  }
+
+  renderVals() {
+    const s = this.state;
+    const playing = ST.find(x => x.id === s.playingId) || ST[0];
+    const favStations = ST.filter(x => s.favs[x.id]);
+    const q = s.query.trim().toLowerCase();
+
+    let base = ST;
+    if (s.nav === 'fav') base = favStations;
+    else if (s.nav === 'recent') base = ['jovempan','jb','alpha','tupi','mixrio','bandfm'].map(id => ST.find(x => x.id === id));
+
+    const c = s.chip;
+    if (s.nav === 'home' || s.nav === 'explore') {
+      if (c === 'Rio de Janeiro') base = base.filter(x => x.uf === 'RJ');
+      else if (c === 'São Paulo') base = base.filter(x => x.uf === 'SP');
+      else if (c !== 'Todas') base = base.filter(x => x.genero === c);
+    }
+    if (q) base = base.filter(x => (x.nome + ' ' + x.cidade + ' ' + x.genero + ' ' + x.freq).toLowerCase().indexOf(q) >= 0);
+
+    const titles = { home: 'Ao vivo agora', explore: 'Explorar rádios', fav: 'Suas favoritas', recent: 'Ouvidas recentemente', settings: 'Configurações' };
+    const n = base.length;
+
+    return {
+      nav: NAV.map(x => ({
+        label: x[1],
+        bg: s.nav === x[0] ? 'var(--ink)' : 'transparent',
+        fg: s.nav === x[0] ? 'var(--bg)' : 'var(--ink)',
+        onPick: () => this.setState({ nav: x[0], query: '' })
+      })),
+      favNav: this.wrap(favStations),
+      tabBar: [['home','Início'],['explore','Explorar'],['fav','Favoritos'],['settings','Perfil']].map(x => ({
+        label: x[1], c: s.nav === x[0] ? 'var(--accent)' : 'var(--ink40)',
+        onPick: () => this.setState({ nav: x[0] })
+      })),
+
+      acctIni: s.logged ? 'A' : '?',
+      acctName: s.logged ? 'Ana Ribeiro' : 'Convidado',
+      acctSub: s.logged ? 'ana.ribeiro@email.com' : 'ID CW-7C1E9F40',
+      acctCta: s.logged ? 'Sair' : 'Entrar',
+      acctBadge: s.logged ? 'CONECTADA' : 'CW-7C1E9F40',
+      toggleAuth: () => { this.setState(p => ({ logged: !p.logged })); this.flash(s.logged ? 'Sessão anônima' : 'Conectada como Ana'); },
+
+      query: s.query,
+      onQuery: e => this.setState({ query: e.target.value }),
+      chips: CHIPS.map(x => ({
+        nome: x,
+        bg: x === c ? 'var(--ink)' : 'transparent',
+        fg: x === c ? 'var(--bg)' : 'var(--ink)',
+        bd: x === c ? 'var(--ink)' : 'var(--line)',
+        onPick: () => this.setState({ chip: x })
+      })),
+      chipsMob: CHIPS.slice(0, 4).map(x => ({
+        nome: x,
+        bg: x === c ? 'var(--ink)' : 'transparent',
+        fg: x === c ? 'var(--bg)' : 'var(--ink)',
+        bd: x === c ? 'var(--ink)' : 'var(--line)'
+      })),
+      isGrid: s.view === 'grid' && n > 0,
+      isList: s.view === 'list' && n > 0,
+      isEmpty: n === 0,
+      gridBg: s.view === 'grid' ? 'var(--bg)' : 'transparent',
+      listBg: s.view === 'list' ? 'var(--bg)' : 'transparent',
+      setGrid: () => this.setState({ view: 'grid' }),
+      setList: () => this.setState({ view: 'list' }),
+
+      pageTitle: titles[s.nav],
+      pageCount: n === 1 ? '1 emissora' : n + ' emissoras',
+      list: this.wrap(base),
+      mobileList: this.wrap(ST.slice(0, 6)),
+      extList: this.wrap(favStations.slice(0, 4)),
+
+      playing, playBg: playing.g,
+      isPlaying: s.isPlaying, isPaused: !s.isPlaying,
+      waveOpacity: s.isPlaying ? '1' : '.25',
+      playFav: !!s.favs[playing.id], playNofav: !s.favs[playing.id],
+      favPlaying: e => { if (e) e.stopPropagation(); this.fav(playing); },
+      togglePlay: e => { if (e) e.stopPropagation(); this.setState(p => ({ isPlaying: !p.isPlaying })); },
+
+      timerOpen: s.timerOpen,
+      openTimer: e => { if (e) e.stopPropagation(); this.setState({ timerOpen: true }); },
+      closeTimer: () => this.setState({ timerOpen: false }),
+      clearTimer: () => this.setState({ timer: null, timerOpen: false }),
+      timerLabel: s.timer || 'Temporizador',
+      timerColor: s.timer ? 'var(--accent-ink)' : 'var(--ink60)',
+      timerChipBg: s.timer ? 'var(--accent-soft)' : 'var(--surf2)',
+      timerOptions: TIMERS.map(t => ({
+        label: t, on: s.timer === t,
+        bg: s.timer === t ? 'var(--accent-soft)' : 'transparent',
+        fg: s.timer === t ? 'var(--accent-ink)' : 'var(--ink)',
+        onPick: () => { this.setState({ timer: t, timerOpen: false }); this.flash('Temporizador: ' + t); }
+      })),
+      toast: s.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

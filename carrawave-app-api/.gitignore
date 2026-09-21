@@ -1,0 +1,15 @@
+target/
+*.class
+*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# Segredos locais — nunca commitar
+src/main/resources/application-local.yml
+.env
+.env.*
+*.p12
+*.jks
+*.keystore

@@ -1,0 +1,63 @@
+server:
+  port: ${PORT:8080}
+  # Necessário atrás de proxy (Railway/Render/Nginx) para o Spring enxergar
+  # corretamente que a requisição chegou por HTTPS (X-Forwarded-Proto).
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: carrawave-app-api
+  profiles:
+    # Ative com SPRING_PROFILES_ACTIVE=local para dev na sua máquina (lê
+    # application-local.yml, que NUNCA vai para o Git). Em produção, todos
+    # os valores abaixo vêm de variáveis de ambiente do provedor.
+    active: ${SPRING_PROFILES_ACTIVE:}
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USER}
+    password: ${DATABASE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  flyway:
+    enabled: ${FLYWAY_ENABLED:true}
+    baseline-on-migrate: true
+  jackson:
+    time-zone: UTC
+    default-property-inclusion: non_null
+    # Nunca serializa campos que não existem explicitamente no DTO — evita
+    # vazar campos de entidade por engano caso alguém retorne a entity direto.
+    serialization:
+      fail-on-empty-beans: false
+
+carrawave:
+  jwt:
+    secret: ${JWT_SECRET}
+    access-ttl-minutes: 60
+    refresh-ttl-days: 60
+  cors:
+    origins: ${CORS_ORIGINS}
+  rate-limit:
+    capacity: ${RATE_LIMIT_CAPACITY:60}
+    refill-per-minute: ${RATE_LIMIT_CAPACITY:60}
+    auth-capacity: ${AUTH_RATE_LIMIT_CAPACITY:10}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+
+logging:
+  level:
+    br.com.carrawave: INFO
+  # Nunca deixe DEBUG em org.hibernate.SQL/org.springframework.security em produção:
+  # pode vazar parâmetros de query (incluindo dados de usuário) no log.
