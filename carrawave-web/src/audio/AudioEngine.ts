@@ -41,7 +41,11 @@ class AudioEngine {
   constructor() {
     this.audio = new Audio();
     this.audio.preload = 'none';
-    this.audio.crossOrigin = 'anonymous';
+    // Sem crossOrigin: os relays de rádio de terceiros (ICECAST) não mandam
+    // cabeçalho Access-Control-Allow-Origin, e não precisamos ler os bytes do
+    // áudio via JS (Web Audio API/canvas) — só reproduzir. Com crossOrigin
+    // definido, o navegador exige CORS e bloqueia a reprodução com
+    // "blocked by CORS policy" mesmo a URL sendo válida (200 OK).
 
     this.audio.addEventListener('waiting', () => usePlayerStore.getState().setBuffering(true));
     this.audio.addEventListener('playing', () => usePlayerStore.getState().setBuffering(false));
