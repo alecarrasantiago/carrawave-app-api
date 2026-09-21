@@ -108,6 +108,11 @@ export default function App() {
   const favIds = usePlayerStore((s) => s.favorites);
 
   const debounceRef = useRef<number | null>(null);
+  // Evita que uma resposta antiga (ex.: busca sem filtro, mais lenta)
+  // sobrescreva o resultado de uma busca mais nova que respondeu primeiro
+  // — cada chamada carrega seu próprio número de sequência e só aplica
+  // o resultado se ainda for a mais recente.
+  const searchSeqRef = useRef(0);
 
   const stateOptions = useMemo(() => {
     const ufs = Array.from(new Set(cities.map((c) => c.state).filter(Boolean)));
@@ -189,10 +194,12 @@ export default function App() {
     const genreMatch = genres.find((g) => g.name === chip);
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
+    const seq = ++searchSeqRef.current;
     debounceRef.current = window.setTimeout(async () => {
       try {
         if (nav === 'recent') {
           const items = await fetchHistory(30);
+          if (seq !== searchSeqRef.current) return;
           const stationsFromHistory = items.map((item) => item.station);
           setHistory(stationsFromHistory);
           setStations(stationsFromHistory);
@@ -211,6 +218,7 @@ export default function App() {
             page: 0,
             size: PAGE_SIZE,
           });
+          if (seq !== searchSeqRef.current) return;
           setStations(res.content);
           setTotalElements(res.totalElements);
         } else {
@@ -225,14 +233,16 @@ export default function App() {
             page: 0,
             size: PAGE_SIZE,
           });
+          if (seq !== searchSeqRef.current) return;
           setStations(res.content);
           setTotalElements(res.totalElements);
         }
         setLoadError(null);
       } catch {
+        if (seq !== searchSeqRef.current) return;
         setLoadError('Não foi possível carregar as rádios agora.');
       } finally {
-        setLoading(false);
+        if (seq === searchSeqRef.current) setLoading(false);
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -240,6 +250,10 @@ export default function App() {
 
   async function loadMore() {
     if (loadingMore || nav === 'podcasts' || nav === 'samba' || nav === 'fav' || nav === 'recent') return;
+    // Trava a sequência atual: se o filtro mudar (e a busca debounced
+    // disparar de novo) antes dessa página extra voltar, o resultado é
+    // descartado em vez de ser anexado à lista errada.
+    const seq = searchSeqRef.current;
     setLoadingMore(true);
     try {
       const genreMatch = genres.find((g) => g.name === chip);
@@ -252,12 +266,15 @@ export default function App() {
         page: nextPage,
         size: PAGE_SIZE,
       });
+      if (seq !== searchSeqRef.current) return;
       setStations((prev) => [...prev, ...res.content]);
       setTotalElements(res.totalElements);
     } catch {
-      usePlayerStore.getState().showToast('Não foi possível carregar mais rádios.');
+      if (seq === searchSeqRef.current) {
+        usePlayerStore.getState().showToast('Não foi possível carregar mais rádios.');
+      }
     } finally {
-      setLoadingMore(false);
+      if (seq === searchSeqRef.current) setLoadingMore(false);
     }
   }
 
