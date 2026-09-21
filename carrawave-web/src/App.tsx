@@ -56,6 +56,8 @@ export default function App() {
   const [history, setHistory] = useState<StationSummary[]>([]);
   const [authOpen, setAuthOpen] = useState(false);
   const [entered, setEntered] = useState(() => storage.get(ENTERED_KEY) === '1');
+  const [connecting, setConnecting] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   const isMobile = useIsMobile();
 
@@ -85,18 +87,44 @@ export default function App() {
     // que a pessoa passar pela tela inicial e escolher "visitante" ou entrar —
     // assim nenhum registro é criado no banco antes de uma escolha explícita.
     if (!entered) return;
+    let cancelled = false;
+
     (async () => {
-      try {
-        const [c, g, meRes] = await Promise.all([fetchCities(), fetchGenres(), fetchMe()]);
-        setCities(c);
-        setGenres(g);
-        setMe(meRes);
-        await refreshFavorites();
-      } catch {
-        setLoadError('Não foi possível conectar ao servidor. Verifique se o backend está rodando.');
+      // O backend roda no plano grátis do Render, que "dorme" depois de um
+      // tempo sem uso — a primeira chamada depois disso pode levar até ~1
+      // minuto pra responder enquanto ele acorda. Em vez de mostrar um erro
+      // assustador de cara, tentamos de novo algumas vezes, com uma mensagem
+      // mais tranquila, antes de admitir que realmente não conectou.
+      const delaysMs = [1500, 3000, 6000, 10000, 15000];
+      for (let attempt = 0; attempt <= delaysMs.length; attempt++) {
+        if (cancelled) return;
+        try {
+          const [c, g, meRes] = await Promise.all([fetchCities(), fetchGenres(), fetchMe()]);
+          if (cancelled) return;
+          setCities(c);
+          setGenres(g);
+          setMe(meRes);
+          setLoadError(null);
+          setConnecting(false);
+          await refreshFavorites();
+          return;
+        } catch {
+          if (cancelled) return;
+          if (attempt === delaysMs.length) {
+            setConnecting(false);
+            setLoadError('Não foi possível conectar ao servidor. Tente novamente em um instante.');
+            return;
+          }
+          setConnecting(true);
+          await new Promise((resolve) => window.setTimeout(resolve, delaysMs[attempt]));
+        }
       }
     })();
-  }, [entered]);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [entered, retryKey]);
 
   useEffect(() => {
     if (!entered) return;
@@ -135,7 +163,12 @@ export default function App() {
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [entered, nav, chip, query, cities, genres, favorites]);
+  }, [entered, retryKey, nav, chip, query, cities, genres, favorites]);
+
+  function handleRetry() {
+    setLoadError(null);
+    setRetryKey((k) => k + 1);
+  }
 
   function isFavorited(stationId: string) {
     return favIds.has(stationId);
@@ -336,13 +369,48 @@ export default function App() {
                 </div>
               )}
 
-              {loadError && (
-                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--accent-soft)', color: 'var(--accent-ink)', font: '600 13px Figtree' }}>
-                  {loadError}
+              {connecting && !loadError && (
+                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Figtree', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
+                  Conectando ao servidor… na primeira vez pode levar até 1 minuto.
                 </div>
               )}
 
-              {!loadError && !loading && n === 0 && (
+              {loadError && (
+                <div
+                  style={{
+                    marginTop: 24,
+                    padding: '16px 20px',
+                    borderRadius: 18,
+                    background: 'var(--accent-soft)',
+                    color: 'var(--accent-ink)',
+                    font: '600 13px Figtree',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 16,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  {loadError}
+                  <div
+                    onClick={handleRetry}
+                    style={{
+                      cursor: 'pointer',
+                      flex: 'none',
+                      padding: '7px 14px',
+                      borderRadius: 999,
+                      background: 'var(--accent-ink)',
+                      color: 'var(--onacc)',
+                      font: '700 12px Figtree',
+                    }}
+                  >
+                    Tentar novamente
+                  </div>
+                </div>
+              )}
+
+              {!loadError && !connecting && !loading && n === 0 && (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '80px 40px' }}>
                   <div style={{ width: 96, height: 96, borderRadius: 999, background: 'var(--surf2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <SearchIcon size={40} color="var(--ink40)" />

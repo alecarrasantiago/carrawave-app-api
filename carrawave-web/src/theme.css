@@ -206,3 +206,8 @@ input[type='range']::-moz-range-thumb {
   background: var(--accent);
   cursor: pointer;
 }
+@keyframes cw-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
