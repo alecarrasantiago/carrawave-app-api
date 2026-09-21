@@ -83,10 +83,6 @@ public class StationService {
                 : org.springframework.data.domain.PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), resolvedSort);
 
         Page<Station> page = stationRepository.findAll(spec, sortedPageable);
-        // DEBUG TEMPORARIO - remover depois de resolver o bug das 0 emissoras
-        log.info("DEBUG stations search: city={} state={} genre={} q={} sort={} page={} size={} -> totalElements={} contentSize={}",
-                cityParam, stateParam, genreParam, q, sort, sortedPageable.getPageNumber(), sortedPageable.getPageSize(),
-                page.getTotalElements(), page.getContent().size());
 
         Set<Long> favoriteIds = resolveFavoriteStationIds(principal);
         Map<Long, Long> listeners = listenerCounts(page.getContent().stream().map(Station::getId).toList());
@@ -173,12 +169,18 @@ public class StationService {
         return new HomeResponse(greetingForNow(), liveNow, sections, genres);
     }
 
+    // Cidades e gêneros praticamente não mudam em produção (só via migração +
+    // deploy, que já reinicia o processo e limpa esse cache) — cachear evita
+    // recalcular essas listas (e suas contagens) a cada abertura do app por
+    // cada pessoa.
+    @Cacheable("cities")
     public List<CitySummary> cities() {
         return cityRepository.findAll().stream()
                 .map(c -> CitySummary.withCount(c, stationRepository.countByCityId(c.getId())))
                 .toList();
     }
 
+    @Cacheable("genres")
     public List<GenreSummary> genres() {
         return genreRepository.findAll().stream()
                 .map(g -> GenreSummary.withCount(g, countStationsWithGenre(g)))
@@ -211,7 +213,10 @@ public class StationService {
     }
 
     private long countStationsWithGenre(Genre genre) {
-        return stationRepository.findAll(StationSpecifications.active().and(StationSpecifications.genreIs(genre.getPublicId()))).size();
+        // Antes carregava todas as entidades Station só pra contar (.size())
+        // — trocado por um COUNT de verdade no banco, que não precisa trazer
+        // nenhuma linha pra memória da aplicação.
+        return stationRepository.count(StationSpecifications.active().and(StationSpecifications.genreIs(genre.getPublicId())));
     }
 
     private String greetingForNow() {

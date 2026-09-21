@@ -3,6 +3,12 @@ server:
   # Necessário atrás de proxy (Railway/Render/Nginx) para o Spring enxergar
   # corretamente que a requisição chegou por HTTPS (X-Forwarded-Proto).
   forward-headers-strategy: framework
+  # Comprime as respostas JSON (a lista de rádios é o maior payload do app) —
+  # ajuda bastante em conexão de celular, que é o cenário principal do app.
+  compression:
+    enabled: true
+    mime-types: application/json,text/html,text/plain,text/css,application/javascript
+    min-response-size: 1024
 
 spring:
   application:
@@ -24,6 +30,12 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+        # Evita N+1: sem isso, cada rádio listada faz 2 consultas extras
+        # (cidade e gêneros, ambos lazy) uma por uma — 60 rádios numa página
+        # viravam ~120 idas ao banco só pra montar a lista. Com isso, o
+        # Hibernate agrupa essas buscas em poucas consultas "IN (...)" pro
+        # lote inteiro, que era o maior motivo do app demorar pra carregar.
+        default_batch_fetch_size: 50
   flyway:
     enabled: ${FLYWAY_ENABLED:true}
     baseline-on-migrate: true
