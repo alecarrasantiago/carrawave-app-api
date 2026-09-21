@@ -9,10 +9,7 @@ Monorepo com backend, web app e (em breve) app Android.
 ```
 carra-wave/
 ├── carrawave-app-api/    # Backend — Java 21 + Spring Boot 3.3 + PostgreSQL
-├── carrawave-web/        # Web app — React 18 + Vite + TypeScript
-├── design/                # Mockups de referência (.dc.html) usados no layout
-├── API-CONTRACT.md        # Contrato de API, schema do banco, regras de token — fonte da verdade do backend
-└── MANUAL-CARRA-WAVE.md   # Manual completo de construção do projeto, do zero ao ar
+└── carrawave-web/        # Web app — React 18 + Vite + TypeScript
 ```
 
 ## Stack
@@ -66,7 +63,3 @@ Acesse `http://localhost:5173`.
 - Headers de segurança (CSP, HSTS, X-Content-Type-Options, Referrer-Policy) e CORS restrito às origens configuradas.
 - Nenhuma credencial, segredo ou dado sensível vai para o repositório — tudo via variável de ambiente ou arquivo `*-local.yml` no `.gitignore`.
 
-## Documentação
-
-- [`API-CONTRACT.md`](./API-CONTRACT.md) — todos os endpoints, schema do banco e regras de autenticação.
-- [`MANUAL-CARRA-WAVE.md`](./MANUAL-CARRA-WAVE.md) — manual completo do projeto, decisões de arquitetura e roteiro de construção.

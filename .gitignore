@@ -27,3 +27,8 @@ Thumbs.db
 # Metadados internos da ferramenta de design (não faz parte do projeto)
 _ds/
 .thumbnail
+
+# Documentação interna — não deve ir para o repositório público
+design/
+API-CONTRACT.md
+MANUAL-CARRA-WAVE.md
