@@ -6,7 +6,7 @@ import { PlayerBar } from './components/PlayerBar';
 import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
 import { WelcomeGate } from './components/WelcomeGate';
-import { GridIcon, ListIcon, SearchIcon, LockIcon, MicIcon } from './components/icons';
+import { GridIcon, ListIcon, SearchIcon, LockIcon, MicIcon, GitHubIcon, InstagramIcon, MailIcon } from './components/icons';
 import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, removeFavorite, searchStations } from './api/catalog';
 import { logout } from './api/auth';
 import { storage } from './api/storage';
@@ -753,6 +753,40 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
 
       <div style={{ marginTop: 16, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>
         Suas preferências de tema, qualidade de áudio e reprodução automática podem ser ajustadas na versão mobile e sincronizam com esta conta.
+      </div>
+
+      <div style={{ marginTop: 16, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
+        <div style={{ font: '700 13px Figtree' }}>Desenvolvido por</div>
+        <div style={{ font: '600 13px Figtree', color: 'var(--ink)', marginTop: 6 }}>
+          Alessandro Carra Rodrigues Santiago
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14 }}>
+          <a
+            href="https://github.com/alecarrasantiago"
+            target="_blank"
+            rel="noreferrer"
+            title="GitHub"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, borderRadius: 999, background: 'var(--surf2)', color: 'var(--ink)' }}
+          >
+            <GitHubIcon size={18} color="var(--ink)" />
+          </a>
+          <a
+            href="mailto:alecarra.santiago@gmail.com"
+            title="E-mail"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, borderRadius: 999, background: 'var(--surf2)', color: 'var(--ink)' }}
+          >
+            <MailIcon size={18} color="var(--ink)" />
+          </a>
+          <a
+            href="https://www.instagram.com/alehcarra/"
+            target="_blank"
+            rel="noreferrer"
+            title="Instagram"
+            style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 38, height: 38, borderRadius: 999, background: 'var(--surf2)', color: 'var(--ink)' }}
+          >
+            <InstagramIcon size={18} color="var(--ink)" />
+          </a>
+        </div>
       </div>
     </div>
   );
