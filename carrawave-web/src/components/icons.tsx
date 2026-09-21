@@ -170,3 +170,11 @@ export function MailIcon({ size = 20, color = 'currentColor' }: IconProps) {
     </svg>
   );
 }
+
+export function ChevronDownIcon({ size = 22, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}

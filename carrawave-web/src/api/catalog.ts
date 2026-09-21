@@ -21,6 +21,10 @@ export function getStation(id: string): Promise<StationSummary & { similar?: Sta
   return apiFetch(`/api/v1/stations/${id}`);
 }
 
+export function fetchNowPlaying(stationId: string): Promise<{ title: string | null }> {
+  return apiFetch(`/api/v1/stations/${stationId}/now-playing`);
+}
+
 export function fetchCities(): Promise<CitySummary[]> {
   return apiFetch<CitySummary[]>('/api/v1/cities');
 }

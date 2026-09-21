@@ -21,6 +21,7 @@ interface Props {
   onToggleFavorite: () => void;
   onVolumeChange: (v: number) => void;
   onSetSleepTimer: (minutes: SleepTimerOption) => void;
+  onExpand?: () => void;
   sidebarWidth: number;
   bottomOffset?: number;
 }
@@ -35,6 +36,7 @@ export function PlayerBar({
   onToggleFavorite,
   onVolumeChange,
   onSetSleepTimer,
+  onExpand,
   sidebarWidth,
   bottomOffset = 0,
 }: Props) {
@@ -148,7 +150,7 @@ export function PlayerBar({
           }}
         >
           <div
-            onClick={() => setTimerOpen(true)}
+            onClick={() => onExpand?.()}
             style={{
               flex: 'none',
               width: 42,
@@ -164,7 +166,7 @@ export function PlayerBar({
           >
             {stationInitials(station)}
           </div>
-          <div style={{ flex: 1, minWidth: 0 }} onClick={() => setTimerOpen(true)}>
+          <div style={{ flex: 1, minWidth: 0 }} onClick={() => onExpand?.()}>
             <div style={{ font: '700 13.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
               <div style={{ flex: 'none', width: 5, height: 5, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />

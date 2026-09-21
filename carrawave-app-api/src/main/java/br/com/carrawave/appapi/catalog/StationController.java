@@ -16,9 +16,11 @@ import java.util.UUID;
 public class StationController {
 
     private final StationService stationService;
+    private final NowPlayingService nowPlayingService;
 
-    public StationController(StationService stationService) {
+    public StationController(StationService stationService, NowPlayingService nowPlayingService) {
         this.stationService = stationService;
+        this.nowPlayingService = nowPlayingService;
     }
 
     @GetMapping("/stations")
@@ -50,6 +52,15 @@ public class StationController {
     @GetMapping("/stations/{id}/stream-token")
     public Map<String, Object> streamToken(@PathVariable UUID id) {
         return stationService.getStreamToken(id);
+    }
+
+    @GetMapping("/stations/{id}/now-playing")
+    public Map<String, Object> nowPlaying(@PathVariable UUID id) {
+        // Lê o metadado "StreamTitle" embutido no stream (protocolo ICY) —
+        // best-effort: nem toda rádio manda essa informação, então "title"
+        // pode vir null (o app simplesmente não mostra a música nesse caso).
+        // Usamos singletonMap (não Map.of) porque Map.of lança NPE em valor nulo.
+        return java.util.Collections.singletonMap("title", nowPlayingService.getNowPlaying(id));
     }
 
     @GetMapping("/home")

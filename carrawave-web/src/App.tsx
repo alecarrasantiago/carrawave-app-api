@@ -3,6 +3,7 @@ import { Sidebar, type NavKey } from './components/Sidebar';
 import { StationCard } from './components/StationCard';
 import { StationRow } from './components/StationRow';
 import { PlayerBar } from './components/PlayerBar';
+import { NowPlayingSheet } from './components/NowPlayingSheet';
 import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
 import { WelcomeGate } from './components/WelcomeGate';
@@ -97,6 +98,7 @@ export default function App() {
   const [entered, setEntered] = useState(() => storage.get(ENTERED_KEY) === '1');
   const [connecting, setConnecting] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+  const [nowPlayingOpen, setNowPlayingOpen] = useState(false);
 
   const isMobile = useIsMobile();
 
@@ -667,9 +669,26 @@ export default function App() {
         onToggleFavorite={() => current && toggleFavorite(current)}
         onVolumeChange={handleVolumeChange}
         onSetSleepTimer={handleSetSleepTimer}
+        onExpand={() => setNowPlayingOpen(true)}
         sidebarWidth={sidebarWidthForOverlays}
         bottomOffset={isMobile ? MOBILE_TABBAR_H : 0}
       />
+
+      {isMobile && (
+        <NowPlayingSheet
+          open={nowPlayingOpen}
+          onClose={() => setNowPlayingOpen(false)}
+          station={current}
+          isPlaying={isPlaying}
+          favorited={current ? isFavorited(current.id) : false}
+          volume={volume}
+          sleepTimer={sleepTimer}
+          onTogglePlay={togglePlay}
+          onToggleFavorite={() => current && toggleFavorite(current)}
+          onVolumeChange={handleVolumeChange}
+          onSetSleepTimer={handleSetSleepTimer}
+        />
+      )}
 
       <Toast message={toast?.message ?? null} sidebarWidth={sidebarWidthForOverlays} bottom={isMobile ? bottomReserved + 14 : 96} />
 
