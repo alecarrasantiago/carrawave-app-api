@@ -1,6 +1,7 @@
 import type { StationSummary } from '../api/types';
 import { stationGradient, stationInitials, formatListeners } from '../utils/gradient';
 import { HeartIcon, PlayIcon } from './icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 interface Props {
   station: StationSummary;
@@ -10,6 +11,8 @@ interface Props {
 }
 
 export function StationRow({ station, favorited, onPlay, onToggleFavorite }: Props) {
+  const isMobile = useIsMobile();
+
   return (
     <>
       <div
@@ -19,23 +22,23 @@ export function StationRow({ station, favorited, onPlay, onToggleFavorite }: Pro
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
-          gap: 15,
-          padding: '11px 12px',
-          margin: '0 -12px',
+          gap: isMobile ? 11 : 15,
+          padding: isMobile ? '10px 8px' : '11px 12px',
+          margin: isMobile ? '0 -8px' : '0 -12px',
           borderRadius: 20,
         }}
       >
         <div
           style={{
             flex: 'none',
-            width: 52,
-            height: 52,
-            borderRadius: 17,
+            width: isMobile ? 44 : 52,
+            height: isMobile ? 44 : 52,
+            borderRadius: isMobile ? 14 : 17,
             background: stationGradient(station),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: '400 17px Caprasimo, serif',
+            font: `400 ${isMobile ? 15 : 17}px Caprasimo, serif`,
             color: 'rgba(255,255,255,.95)',
           }}
         >
@@ -43,12 +46,17 @@ export function StationRow({ station, favorited, onPlay, onToggleFavorite }: Pro
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ font: '700 14.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
-          <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 2 }}>
+          <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {station.frequency} · {station.city.name}
+            {isMobile && station.genres[0] ? ` · ${station.genres[0].name}` : ''}
           </div>
         </div>
-        <div style={{ flex: 'none', width: 100, font: '500 12.5px Figtree', color: 'var(--ink60)' }}>{station.genres[0]?.name ?? ''}</div>
-        <div style={{ flex: 'none', width: 96, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>{formatListeners(station.listenersNow)}</div>
+        {!isMobile && (
+          <>
+            <div style={{ flex: 'none', width: 100, font: '500 12.5px Figtree', color: 'var(--ink60)' }}>{station.genres[0]?.name ?? ''}</div>
+            <div style={{ flex: 'none', width: 96, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>{formatListeners(station.listenersNow)}</div>
+          </>
+        )}
         <div
           onClick={(e) => {
             e.stopPropagation();
@@ -59,23 +67,25 @@ export function StationRow({ station, favorited, onPlay, onToggleFavorite }: Pro
         >
           <HeartIcon size={18} filled={favorited} color={favorited ? 'var(--accent)' : 'var(--ink40)'} />
         </div>
-        <div
-          className="cw-hover-accent"
-          style={{
-            flex: 'none',
-            width: 38,
-            height: 38,
-            borderRadius: 999,
-            border: '1.5px solid var(--line)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <PlayIcon size={13} color="var(--ink)" />
-        </div>
+        {!isMobile && (
+          <div
+            className="cw-hover-accent"
+            style={{
+              flex: 'none',
+              width: 38,
+              height: 38,
+              borderRadius: 999,
+              border: '1.5px solid var(--line)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <PlayIcon size={13} color="var(--ink)" />
+          </div>
+        )}
       </div>
-      <div style={{ height: 1, background: 'var(--line)', marginLeft: 67 }} />
+      <div style={{ height: 1, background: 'var(--line)', marginLeft: isMobile ? 0 : 67 }} />
     </>
   );
 }

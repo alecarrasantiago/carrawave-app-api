@@ -11,8 +11,14 @@ import { logout } from './api/auth';
 import type { CitySummary, GenreSummary, MeResponse, StationSummary } from './api/types';
 import { usePlayerStore } from './store/playerStore';
 import { audioEngine, type PlaybackSource } from './audio/AudioEngine';
+import { useIsMobile } from './hooks/useIsMobile';
 
 const SIDEBAR_WIDTH = 238;
+// Altura reservada pra barra de navegação inferior no mobile (conteúdo +
+// uma margem generosa pra cobrir a safe-area do notch/home-indicator do
+// iPhone sem precisar calcular o valor exato em JS).
+const MOBILE_TABBAR_H = 92;
+const MOBILE_PLAYER_H = 62;
 
 const TITLES: Record<NavKey, string> = {
   home: 'Ao vivo agora',
@@ -45,6 +51,8 @@ export default function App() {
   const [favorites, setFavorites] = useState<StationSummary[]>([]);
   const [history, setHistory] = useState<StationSummary[]>([]);
   const [authOpen, setAuthOpen] = useState(false);
+
+  const isMobile = useIsMobile();
 
   const current = usePlayerStore((s) => s.current);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -190,6 +198,10 @@ export default function App() {
   const showChips = nav === 'home' || nav === 'explore';
   const n = stations.length;
 
+  const hasStation = !!current;
+  const bottomReserved = isMobile ? MOBILE_TABBAR_H + (hasStation ? MOBILE_PLAYER_H : 0) : 0;
+  const sidebarWidthForOverlays = isMobile ? 0 : SIDEBAR_WIDTH;
+
   return (
     <div
       style={{
@@ -197,16 +209,28 @@ export default function App() {
         height: '100vh',
         position: 'relative',
         background: 'var(--bg)',
+        overflow: 'hidden',
       }}
     >
       <Sidebar nav={nav} onNavChange={(k) => { setNav(k); setQuery(''); }} favorites={favorites} onPlayFavorite={playStation} me={me} onAuthClick={handleAuthClick} />
 
       <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: 'none', display: 'flex', alignItems: 'center', gap: 14, padding: '16px 26px', borderBottom: '1px solid var(--line)' }}>
+        <div
+          style={{
+            flex: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: isMobile ? 10 : 14,
+            flexWrap: isMobile ? 'wrap' : 'nowrap',
+            padding: isMobile ? '14px 14px' : '16px 26px',
+            borderBottom: '1px solid var(--line)',
+          }}
+        >
           <div
             style={{
               flex: 1,
-              maxWidth: 430,
+              minWidth: 0,
+              maxWidth: isMobile ? 'none' : 430,
               display: 'flex',
               alignItems: 'center',
               gap: 11,
@@ -222,15 +246,17 @@ export default function App() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Rádio, cidade ou gênero"
-              style={{ flex: 1, minWidth: 0, border: 0, outline: 'none', background: 'transparent', font: '500 14px Figtree', color: 'var(--ink)' }}
+              style={{ flex: 1, minWidth: 0, border: 0, outline: 'none', background: 'transparent', font: '500 16px Figtree', color: 'var(--ink)' }}
             />
           </div>
-          <div style={{ flex: 1 }} />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 999, background: 'var(--accent-soft)', font: '600 11.5px Figtree', color: 'var(--accent-ink)' }}>
-            <LockIcon />
-            Conexão segura
-          </div>
-          <div style={{ display: 'flex', gap: 5, padding: 4, borderRadius: 999, background: 'var(--surf2)' }}>
+          {!isMobile && <div style={{ flex: 1 }} />}
+          {!isMobile && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 999, background: 'var(--accent-soft)', font: '600 11.5px Figtree', color: 'var(--accent-ink)' }}>
+              <LockIcon />
+              Conexão segura
+            </div>
+          )}
+          <div style={{ display: 'flex', gap: 5, padding: 4, borderRadius: 999, background: 'var(--surf2)', flex: 'none' }}>
             <div onClick={() => setView('grid')} style={{ cursor: 'pointer', width: 34, height: 30, borderRadius: 999, background: view === 'grid' ? 'var(--bg)' : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GridIcon />
             </div>
@@ -240,13 +266,21 @@ export default function App() {
           </div>
         </div>
 
-        <div className="cw-scroll" style={{ flex: 1, minHeight: 0, overflowY: 'auto', padding: '24px 26px 110px' }}>
+        <div
+          className="cw-scroll"
+          style={{
+            flex: 1,
+            minHeight: 0,
+            overflowY: 'auto',
+            padding: isMobile ? `16px 14px ${bottomReserved + 16}px` : '24px 26px 110px',
+          }}
+        >
           {nav === 'settings' ? (
-            <SettingsPanel me={me} />
+            <SettingsPanel me={me} onAuthClick={handleAuthClick} />
           ) : (
             <>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
-                <div className="cw-display" style={{ fontSize: 26, letterSpacing: '-.01em' }}>{pageTitle}</div>
+                <div className="cw-display" style={{ fontSize: isMobile ? 22 : 26, letterSpacing: '-.01em' }}>{pageTitle}</div>
                 <div style={{ font: '500 13px Figtree', color: 'var(--ink60)' }}>{n === 1 ? '1 emissora' : `${n} emissoras`}</div>
               </div>
 
@@ -290,7 +324,14 @@ export default function App() {
               )}
 
               {!loadError && n > 0 && view === 'grid' && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(176px, 1fr))', gap: '22px 18px', marginTop: 24 }}>
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(auto-fill, minmax(${isMobile ? 134 : 176}px, 1fr))`,
+                    gap: isMobile ? '14px 10px' : '22px 18px',
+                    marginTop: 24,
+                  }}
+                >
                   {stations.map((st) => (
                     <StationCard key={st.id} station={st} favorited={isFavorited(st.id)} onPlay={() => playStation(st)} onToggleFavorite={() => toggleFavorite(st)} />
                   ))}
@@ -319,27 +360,45 @@ export default function App() {
         onToggleFavorite={() => current && toggleFavorite(current)}
         onVolumeChange={handleVolumeChange}
         onSetSleepTimer={handleSetSleepTimer}
-        sidebarWidth={SIDEBAR_WIDTH}
+        sidebarWidth={sidebarWidthForOverlays}
+        bottomOffset={isMobile ? MOBILE_TABBAR_H : 0}
       />
 
-      <Toast message={toast?.message ?? null} sidebarWidth={SIDEBAR_WIDTH} />
+      <Toast message={toast?.message ?? null} sidebarWidth={sidebarWidthForOverlays} bottom={isMobile ? bottomReserved + 14 : 96} />
 
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onSuccess={handleAuthSuccess} />}
     </div>
   );
 }
 
-function SettingsPanel({ me }: { me: MeResponse | null }) {
+function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick: () => void }) {
+  const logged = me?.accountType === 'REGISTERED';
   return (
     <div style={{ maxWidth: 480 }}>
       <div className="cw-display" style={{ fontSize: 26 }}>Configurações</div>
       <div style={{ marginTop: 20, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
         <div style={{ font: '700 13px Figtree' }}>Conta</div>
         <div style={{ font: '500 13px Figtree', color: 'var(--ink60)', marginTop: 6 }}>
-          {me?.accountType === 'REGISTERED' ? `${me.displayName ?? ''} · ${me.email ?? ''}` : `Convidado · ${me?.anonymousLabel ?? ''}`}
+          {logged ? `${me?.displayName ?? ''} · ${me?.email ?? ''}` : `Convidado · ${me?.anonymousLabel ?? ''}`}
         </div>
         <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 10 }}>
           {me?.favoriteCount ?? 0} rádio(s) favoritada(s).
+        </div>
+        <div
+          onClick={onAuthClick}
+          style={{
+            cursor: 'pointer',
+            marginTop: 14,
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '9px 16px',
+            borderRadius: 999,
+            border: '1.5px solid var(--line)',
+            font: '600 12.5px Figtree',
+            color: 'var(--ink60)',
+          }}
+        >
+          {logged ? 'Sair da conta' : 'Entrar ou criar conta'}
         </div>
       </div>
       <div style={{ marginTop: 16, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>

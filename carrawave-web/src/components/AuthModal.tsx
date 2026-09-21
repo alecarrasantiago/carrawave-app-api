@@ -114,7 +114,7 @@ const inputStyle: CSSProperties = {
   borderRadius: 14,
   border: '1.5px solid var(--line)',
   background: 'var(--bg)',
-  font: '500 14px Figtree',
+  font: '500 16px Figtree',
   color: 'var(--ink)',
   boxSizing: 'border-box',
 };

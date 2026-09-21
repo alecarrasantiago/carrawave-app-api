@@ -1,5 +1,7 @@
 import type { MeResponse, StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
+import { ClockIcon, CompassIcon, HeartIcon, HomeIcon, SettingsIcon } from './icons';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 export type NavKey = 'home' | 'explore' | 'fav' | 'recent' | 'settings';
 
@@ -11,6 +13,14 @@ const NAV: { key: NavKey; label: string }[] = [
   { key: 'settings', label: 'Configurações' },
 ];
 
+const NAV_ICON: Record<NavKey, (color: string) => JSX.Element> = {
+  home: (color) => <HomeIcon size={21} color={color} />,
+  explore: (color) => <CompassIcon size={21} color={color} />,
+  fav: (color) => <HeartIcon size={20} filled={false} color={color} />,
+  recent: (color) => <ClockIcon size={20} color={color} />,
+  settings: (color) => <SettingsIcon size={20} color={color} />,
+};
+
 interface Props {
   nav: NavKey;
   onNavChange: (n: NavKey) => void;
@@ -18,13 +28,57 @@ interface Props {
   onPlayFavorite: (s: StationSummary) => void;
   me: MeResponse | null;
   onAuthClick: () => void;
+  bottomOffset?: number;
 }
 
-export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAuthClick }: Props) {
+export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAuthClick, bottomOffset = 0 }: Props) {
+  const isMobile = useIsMobile();
   const logged = me?.accountType === 'REGISTERED';
   const acctIni = logged ? (me?.displayName?.[0]?.toUpperCase() ?? 'A') : '?';
   const acctName = logged ? me?.displayName || 'Minha conta' : 'Convidado';
   const acctSub = logged ? me?.email ?? '' : me?.anonymousLabel ?? '';
+
+  if (isMobile) {
+    return (
+      <div
+        style={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          bottom: bottomOffset,
+          zIndex: 25,
+          display: 'flex',
+          background: 'var(--surf)',
+          borderTop: '1px solid var(--line)',
+          paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        }}
+      >
+        {NAV.map((n) => {
+          const active = nav === n.key;
+          const color = active ? 'var(--accent)' : 'var(--ink40)';
+          return (
+            <div
+              key={n.key}
+              onClick={() => onNavChange(n.key)}
+              style={{
+                flex: 1,
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: 3,
+                padding: '9px 2px 8px',
+                cursor: 'pointer',
+              }}
+            >
+              {NAV_ICON[n.key](color)}
+              <span style={{ font: '600 10px Figtree', color, letterSpacing: '-.01em' }}>{n.label}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
 
   return (
     <div

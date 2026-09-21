@@ -3,6 +3,7 @@ import type { StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
 import { CheckIcon, ClockIcon, HeartIcon, PauseIcon, PlayIcon, VolumeIcon } from './icons';
 import type { SleepTimerOption } from '../store/playerStore';
+import { useIsMobile } from '../hooks/useIsMobile';
 
 const TIMER_OPTIONS: { label: string; minutes: SleepTimerOption }[] = [
   { label: '15 minutos', minutes: 15 },
@@ -21,6 +22,7 @@ interface Props {
   onVolumeChange: (v: number) => void;
   onSetSleepTimer: (minutes: SleepTimerOption) => void;
   sidebarWidth: number;
+  bottomOffset?: number;
 }
 
 export function PlayerBar({
@@ -34,11 +36,166 @@ export function PlayerBar({
   onVolumeChange,
   onSetSleepTimer,
   sidebarWidth,
+  bottomOffset = 0,
 }: Props) {
   const [timerOpen, setTimerOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   if (!station) {
     return null;
+  }
+
+  if (isMobile) {
+    return (
+      <>
+        {timerOpen && (
+          <div
+            style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: `0 16px ${bottomOffset + 76 + 12}px` }}
+          >
+            <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(24,16,10,.28)' }} />
+            <div
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: 320,
+                borderRadius: 24,
+                background: 'var(--surf)',
+                border: '1.5px solid var(--line)',
+                boxShadow: '0 20px 44px -18px rgba(46,43,37,.6)',
+                padding: 16,
+                animation: 'cw-in .2s ease',
+              }}
+            >
+              <div className="cw-display" style={{ fontSize: 18 }}>Temporizador</div>
+              <div style={{ font: '500 12px Figtree', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 12 }}>
+                {TIMER_OPTIONS.map((t) => (
+                  <div
+                    key={t.label}
+                    onClick={() => {
+                      onSetSleepTimer(t.minutes);
+                      setTimerOpen(false);
+                    }}
+                    className="cw-hover-surf2"
+                    style={{
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      padding: '11px 13px',
+                      borderRadius: 16,
+                      background: sleepTimer === t.minutes ? 'var(--accent-soft)' : 'transparent',
+                      font: '600 13.5px Figtree',
+                      color: sleepTimer === t.minutes ? 'var(--accent-ink)' : 'var(--ink)',
+                    }}
+                  >
+                    {t.label}
+                    {sleepTimer === t.minutes && <CheckIcon />}
+                  </div>
+                ))}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 11, marginTop: 12, padding: '0 2px' }}>
+                <VolumeIcon />
+                <input
+                  type="range"
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  value={volume}
+                  onChange={(e) => onVolumeChange(Number(e.target.value))}
+                  style={{ flex: 1, accentColor: 'var(--accent)' }}
+                />
+              </div>
+              <div
+                onClick={() => {
+                  onSetSleepTimer(null);
+                  setTimerOpen(false);
+                }}
+                className="cw-hover-surf2"
+                style={{
+                  cursor: 'pointer',
+                  marginTop: 10,
+                  height: 42,
+                  borderRadius: 999,
+                  border: '1.5px solid var(--line)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  font: '600 13px Figtree',
+                  color: 'var(--ink60)',
+                }}
+              >
+                Fechar
+              </div>
+            </div>
+          </div>
+        )}
+
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: bottomOffset,
+            zIndex: 24,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            padding: '10px 14px',
+            background: 'var(--surf)',
+            borderTop: '1px solid var(--line)',
+            boxShadow: '0 -8px 26px -18px rgba(46,43,37,.6)',
+          }}
+        >
+          <div
+            onClick={() => setTimerOpen(true)}
+            style={{
+              flex: 'none',
+              width: 42,
+              height: 42,
+              borderRadius: 14,
+              background: stationGradient(station),
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              font: '400 15px Caprasimo, serif',
+              color: 'rgba(255,255,255,.95)',
+            }}
+          >
+            {stationInitials(station)}
+          </div>
+          <div style={{ flex: 1, minWidth: 0 }} onClick={() => setTimerOpen(true)}>
+            <div style={{ font: '700 13.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+              <div style={{ flex: 'none', width: 5, height: 5, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
+              <span style={{ font: '500 11.5px Figtree', color: 'var(--ink60)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                Ao vivo · {station.city.name}
+              </span>
+            </div>
+          </div>
+          <div onClick={onToggleFavorite} style={{ cursor: 'pointer', flex: 'none', width: 34, height: 34, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <HeartIcon size={18} filled={favorited} color={favorited ? 'var(--accent)' : 'var(--ink40)'} />
+          </div>
+          <div
+            onClick={onTogglePlay}
+            style={{
+              cursor: 'pointer',
+              flex: 'none',
+              width: 42,
+              height: 42,
+              borderRadius: 999,
+              background: 'var(--accent)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxShadow: '0 8px 20px -10px var(--accent)',
+            }}
+          >
+            {isPlaying ? <PauseIcon height={15} color="var(--onacc)" /> : <PlayIcon size={16} color="var(--onacc)" />}
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (

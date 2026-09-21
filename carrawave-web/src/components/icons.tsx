@@ -95,3 +95,30 @@ export function CheckIcon({ size = 17, color = 'var(--accent)' }: IconProps) {
     </svg>
   );
 }
+
+export function HomeIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 11.5L12 4l8 7.5" />
+      <path d="M6 10v9.5h12V10" />
+    </svg>
+  );
+}
+
+export function CompassIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.4} strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M14.6 9.4l-2 5.2-5.2 2 2-5.2z" />
+    </svg>
+  );
+}
+
+export function SettingsIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.3} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 3.5v2.4M12 18.1v2.4M4.4 7l2 1.2M17.6 15.8l2 1.2M4.4 17l2-1.2M17.6 8.2l2-1.2M2.9 12h2.4M18.7 12h2.4" />
+    </svg>
+  );
+}
