@@ -77,6 +77,31 @@ const UF_NAMES: Record<string, string> = {
 
 const PAGE_SIZE = 60;
 
+const RETRY_DELAYS_MS = [1500, 3000, 6000, 10000, 15000];
+
+// Tenta de novo com espera crescente antes de desistir de vez — o Render
+// (plano grátis) as vezes "dorme" e a primeira resposta demora ou falha
+// uma vez só; sem isso, essa falha passageira ficava só com a mensagem de
+// erro esperando um clique manual em "Tentar novamente", mesmo o servidor
+// tendo acabado de acordar sozinho um instante depois.
+async function withRetry<T>(fn: () => Promise<T>, onRetrying: (retrying: boolean) => void): Promise<T> {
+  for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+    try {
+      const result = await fn();
+      onRetrying(false);
+      return result;
+    } catch (err) {
+      if (attempt === RETRY_DELAYS_MS.length) {
+        onRetrying(false);
+        throw err;
+      }
+      onRetrying(true);
+      await new Promise((resolve) => window.setTimeout(resolve, RETRY_DELAYS_MS[attempt]));
+    }
+  }
+  throw new Error('unreachable');
+}
+
 export default function App() {
   const [nav, setNav] = useState<NavKey>('home');
   const [chip, setChip] = useState('Todas');
@@ -101,6 +126,11 @@ export default function App() {
   const [authOpen, setAuthOpen] = useState(false);
   const [entered, setEntered] = useState(() => storage.get(ENTERED_KEY) === '1');
   const [connecting, setConnecting] = useState(false);
+  // Feedback visual específico da lista de rádios (diferente de "connecting",
+  // que é só da leva inicial de cidades/gêneros/perfil) — sem isso a tela
+  // ficava em branco ("0 emissoras", sem aviso nenhum) enquanto essa busca
+  // demorava ou tentava de novo, parecendo que o app tinha travado.
+  const [stationsRetrying, setStationsRetrying] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
   const [nowPlayingOpen, setNowPlayingOpen] = useState(false);
 
@@ -201,10 +231,14 @@ export default function App() {
 
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
     const seq = ++searchSeqRef.current;
+    setStationsRetrying(false);
     debounceRef.current = window.setTimeout(async () => {
+      const markRetrying = (retrying: boolean) => {
+        if (seq === searchSeqRef.current) setStationsRetrying(retrying);
+      };
       try {
         if (nav === 'recent') {
-          const items = await fetchHistory(30);
+          const items = await withRetry(() => fetchHistory(30), markRetrying);
           if (seq !== searchSeqRef.current) return;
           const stationsFromHistory = items.map((item) => item.station);
           setHistory(stationsFromHistory);
@@ -218,12 +252,12 @@ export default function App() {
           // Aba fixa com as rádios de samba-enredo/carnaval do Rio
           // verificadas manualmente — sempre mostra todas de uma vez.
           const sambaGenre = genres.find((g) => g.slug === 'samba-enredo');
-          const res = await searchStations({
+          const res = await withRetry(() => searchStations({
             genre: sambaGenre?.id,
             sort: 'popular',
             page: 0,
             size: PAGE_SIZE,
-          });
+          }), markRetrying);
           if (seq !== searchSeqRef.current) return;
           setStations(res.content);
           setTotalElements(res.totalElements);
@@ -231,14 +265,14 @@ export default function App() {
           // Sempre busca a primeira página aqui — o app carrega pouco de
           // início (leve e rápido de abrir) e "Carregar mais" (loadMore,
           // abaixo) busca o resto só se a pessoa pedir.
-          const res = await searchStations({
+          const res = await withRetry(() => searchStations({
             state: stateFilter || undefined,
             genre: genreMatch?.id,
             q: query || undefined,
             sort: 'popular',
             page: 0,
             size: PAGE_SIZE,
-          });
+          }), markRetrying);
           if (seq !== searchSeqRef.current) return;
           setStations(res.content);
           setTotalElements(res.totalElements);
@@ -248,7 +282,10 @@ export default function App() {
         if (seq !== searchSeqRef.current) return;
         setLoadError('Não foi possível carregar as rádios agora.');
       } finally {
-        if (seq === searchSeqRef.current) setLoading(false);
+        if (seq === searchSeqRef.current) {
+          setLoading(false);
+          setStationsRetrying(false);
+        }
       }
     }, 250);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -540,6 +577,26 @@ export default function App() {
                 <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Figtree', display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
                   Conectando ao servidor… na primeira vez pode levar até 1 minuto.
+                </div>
+              )}
+
+              {/* Sem "connecting" nem erro, mas essa busca especificamente tentando
+                  de novo (ex.: o servidor demorou/falhou uma vez ao acordar) — antes
+                  a tela ficava em branco ("0 emissoras") nesse meio-tempo, parecendo
+                  travada. */}
+              {!connecting && stationsRetrying && !loadError && (
+                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Figtree', display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
+                  Reconectando ao servidor…
+                </div>
+              )}
+
+              {/* Carregamento comum (rápido, sem retry) da lista de rádios — só um
+                  aviso leve, pra tela nunca ficar muda enquanto busca. */}
+              {loading && !connecting && !stationsRetrying && !loadError && n === 0 && (
+                <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 10, color: 'var(--ink40)', font: '600 13px Figtree' }}>
+                  <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
+                  Carregando rádios…
                 </div>
               )}
 
