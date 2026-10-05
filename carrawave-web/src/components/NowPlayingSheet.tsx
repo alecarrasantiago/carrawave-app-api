@@ -64,7 +64,7 @@ export function NowPlayingSheet({
         animation: 'cw-in .22s ease',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 18px 4px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: 'calc(env(safe-area-inset-top, 0px) + 18px) 18px 4px' }}>
         <div
           onClick={onClose}
           style={{ cursor: 'pointer', width: 38, height: 38, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surf2)' }}
@@ -74,20 +74,10 @@ export function NowPlayingSheet({
         <div style={{ font: '700 11px Figtree', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
           Tocando agora
         </div>
-        {onShare ? (
-          <div
-            onClick={onShare}
-            aria-label="Compartilhar rádio"
-            style={{ cursor: 'pointer', width: 38, height: 38, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surf2)' }}
-          >
-            <ShareIcon size={19} color="var(--ink)" />
-          </div>
-        ) : (
-          <div style={{ width: 38, height: 38 }} />
-        )}
+        <div style={{ width: 38, height: 38 }} />
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', overflow: 'hidden' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px calc(env(safe-area-inset-bottom, 0px) + 70px)', overflow: 'hidden' }}>
         <div
           style={{
             width: 'min(74vw, 300px)',
@@ -173,6 +163,32 @@ export function NowPlayingSheet({
             style={{ flex: 1, accentColor: 'var(--accent)' }}
           />
         </div>
+
+        {onShare && (
+          <div
+            onClick={onShare}
+            role="button"
+            aria-label="Compartilhar rádio"
+            style={{
+              cursor: 'pointer',
+              marginTop: 26,
+              width: '100%',
+              maxWidth: 280,
+              padding: '13px 18px',
+              borderRadius: 999,
+              background: 'var(--surf2)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+              font: '700 14px Figtree',
+              color: 'var(--ink)',
+            }}
+          >
+            <ShareIcon size={18} color="var(--ink)" />
+            Compartilhar
+          </div>
+        )}
       </div>
 
       {timerOpen && (

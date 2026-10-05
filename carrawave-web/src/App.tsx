@@ -389,6 +389,14 @@ export default function App() {
     }
   }
 
+  // Os avisos ("Tocando X", "Link copiado"…) somem sozinhos depois de alguns
+  // segundos; sem isso eles ficavam grudados na tela por cima dos controles.
+  useEffect(() => {
+    if (!toast) return;
+    const id = window.setTimeout(() => usePlayerStore.getState().dismissToast(), 2800);
+    return () => window.clearTimeout(id);
+  }, [toast?.id]);
+
   // Presença: a cada minuto (e quando a aba volta a ficar visível) avisa o
   // servidor que o app está aberto e recebe de volta quantas pessoas estão
   // online / ouvindo. Falha aqui nunca atrapalha nada — só some o contador.
@@ -883,7 +891,7 @@ export default function App() {
         />
       )}
 
-      <Toast message={toast?.message ?? null} sidebarWidth={sidebarWidthForOverlays} bottom={isMobile ? bottomReserved + 14 : 96} />
+      <Toast message={toast?.message ?? null} sidebarWidth={sidebarWidthForOverlays} bottom={nowPlayingOpen ? 'calc(env(safe-area-inset-bottom, 0px) + 18px)' : isMobile ? bottomReserved + 14 : 96} />
 
       {authOpen && <AuthModal onClose={() => setAuthOpen(false)} onSuccess={handleAuthSuccess} />}
     </div>

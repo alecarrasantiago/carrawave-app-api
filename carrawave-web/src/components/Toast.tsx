@@ -1,7 +1,7 @@
 interface Props {
   message: string | null;
   sidebarWidth: number;
-  bottom?: number;
+  bottom?: number | string;
 }
 
 export function Toast({ message, sidebarWidth, bottom = 96 }: Props) {
