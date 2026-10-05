@@ -1,0 +1,48 @@
+name: Build (compila backend e frontend)
+
+# Roda a cada push: compila o Java (Maven) e confere o TypeScript/build do
+# front. Serve de "rede de segurança" — se algo quebrar, o GitHub avisa antes
+# (ou junto) do deploy do Render/Vercel.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: carrawave-app-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+          cache-dependency-path: carrawave-app-api/pom.xml
+      - name: Compila (sem testes de integração)
+        run: mvn -B -ntp -DskipTests package
+
+  frontend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: carrawave-web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: carrawave-web/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run build
