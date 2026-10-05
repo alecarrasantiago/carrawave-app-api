@@ -41,6 +41,7 @@ const TITLES: Record<NavKey, string> = {
   samba: 'Samba Enredo',
   rock: 'Rock',
   pagode: 'Pagode e Samba',
+  hiphop: 'Hip Hop e R&B',
   fav: 'Suas favoritas',
   recent: 'Ouvidas recentemente',
   settings: 'Configurações',
@@ -53,6 +54,7 @@ const SOURCE_BY_NAV: Record<NavKey, PlaybackSource> = {
   samba: 'EXPLORE',
   rock: 'EXPLORE',
   pagode: 'EXPLORE',
+  hiphop: 'EXPLORE',
   fav: 'FAVORITES',
   recent: 'HISTORY',
   settings: 'EXPLORE',
@@ -96,6 +98,7 @@ const GENRE_TABS: Partial<Record<NavKey, string>> = {
   samba: 'samba-enredo',
   rock: 'rock',
   pagode: 'pagode',
+  hiphop: 'hip-hop-rb',
 };
 
 const RETRY_DELAYS_MS = [1500, 3000, 6000, 10000, 15000];

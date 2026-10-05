@@ -206,3 +206,13 @@ export function ShareIcon({ size = 20, color = 'currentColor' }: IconProps) {
     </svg>
   );
 }
+
+export function HeadphonesIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.1} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 15v-3a8 8 0 0116 0v3" />
+      <rect x="3" y="14" width="4.5" height="7" rx="1.8" />
+      <rect x="16.5" y="14" width="4.5" height="7" rx="1.8" />
+    </svg>
+  );
+}
