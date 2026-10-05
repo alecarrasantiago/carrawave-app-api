@@ -13,4 +13,8 @@ COPY --from=build /app/target/*.jar app.jar
 
 # O Render injeta a variável PORT — o application.yml já lê ${PORT:8080}.
 EXPOSE 8080
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Flags pensadas pro plano grátis do Render (pouca CPU e ~512 MB de RAM):
+# - SerialGC + TieredStopAtLevel=1: a JVM sobe bem mais rápido (menos tempo de
+#   "acordar" depois de um deploy ou reinício) e usa menos memória.
+# - MaxRAMPercentage: deixa folga pro sistema em vez de estourar o limite.
+ENTRYPOINT ["java", "-XX:+UseSerialGC", "-XX:TieredStopAtLevel=1", "-XX:MaxRAMPercentage=75", "-Xss512k", "-XX:+ExitOnOutOfMemoryError", "-jar", "app.jar"]
