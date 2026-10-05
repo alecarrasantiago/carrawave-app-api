@@ -1,5 +1,6 @@
 package br.com.carrawave.appapi.playback;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -16,6 +17,11 @@ public interface PlaySessionRepository extends JpaRepository<PlaySession, Long> 
     Optional<PlaySession> findByPublicId(UUID publicId);
 
     List<PlaySession> findByUserIdOrderByStartedAtDesc(Long userId);
+
+    /** Últimas rádios ouvidas (uma linha por rádio), já limitadas pelo banco: [stationId, ultimoInicio]. */
+    @Query("select s.stationId, max(s.startedAt) from PlaySession s where s.userId = :userId " +
+            "group by s.stationId order by max(s.startedAt) desc")
+    List<Object[]> findRecentStations(@Param("userId") Long userId, Pageable pageable);
 
     long countByUserId(Long userId);
 

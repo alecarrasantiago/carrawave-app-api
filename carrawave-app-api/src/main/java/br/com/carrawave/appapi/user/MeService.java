@@ -6,10 +6,10 @@ import br.com.carrawave.appapi.catalog.dto.CitySummary;
 import br.com.carrawave.appapi.catalog.dto.GenreSummary;
 import br.com.carrawave.appapi.catalog.dto.StationSummary;
 import br.com.carrawave.appapi.common.ApiException;
-import br.com.carrawave.appapi.playback.PlaySession;
 import br.com.carrawave.appapi.playback.PlaySessionRepository;
 import br.com.carrawave.appapi.security.AuthenticatedUser;
 import br.com.carrawave.appapi.user.dto.*;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,12 +104,11 @@ public class MeService {
     @Transactional(readOnly = true)
     public List<HistoryItem> getHistory(AuthenticatedUser principal, int size) {
         AppUser user = resolveUser(principal);
-        List<PlaySession> sessions = playSessionRepository.findByUserIdOrderByStartedAtDesc(user.getId());
+        int limit = Math.max(1, Math.min(size, 100));
 
         LinkedHashMap<Long, Instant> lastPlayedByStation = new LinkedHashMap<>();
-        for (PlaySession session : sessions) {
-            lastPlayedByStation.putIfAbsent(session.getStationId(), session.getStartedAt());
-            if (lastPlayedByStation.size() >= size) break;
+        for (Object[] row : playSessionRepository.findRecentStations(user.getId(), PageRequest.of(0, limit))) {
+            lastPlayedByStation.put((Long) row[0], (Instant) row[1]);
         }
 
         Map<Long, Station> stations = stationRepository.findAllById(lastPlayedByStation.keySet()).stream()
