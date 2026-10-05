@@ -5,10 +5,12 @@ name: Keep alive (Render)
 # bate no endpoint de saúde a cada 5 minutos, de FORA do servidor (um robô
 # dentro do próprio app não funciona: quando o servidor dorme, o robô dorme
 # junto), mantendo-o acordado. O /actuator/health também consulta o banco,
-# então ajuda a manter o Neon acordado.
+# então ajuda a manter o Neon acordado. Os minutos são "quebrados" (2,7,12...)
+# de propósito: o GitHub atrasa/descarta execuções agendadas em :00 e :05, quando
+# há muita fila.
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "2,7,12,17,22,27,32,37,42,47,52,57 * * * *"
   workflow_dispatch: {}
 
 permissions: {}
