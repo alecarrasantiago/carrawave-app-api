@@ -52,3 +52,13 @@ export function removeFavorite(stationId: string): Promise<void> {
 export function fetchHistory(size = 20): Promise<HistoryItem[]> {
   return apiFetch<HistoryItem[]>('/api/v1/me/history', { query: { size } });
 }
+
+export interface OnlineStats {
+  online: number;
+  listening: number;
+}
+
+/** Avisa que este aparelho está com o app aberto e devolve os contadores. */
+export function reportPresence(): Promise<OnlineStats> {
+  return apiFetch<OnlineStats>('/api/v1/stats/presence', { method: 'POST' });
+}

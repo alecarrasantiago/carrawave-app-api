@@ -23,6 +23,10 @@ public interface PlaySessionRepository extends JpaRepository<PlaySession, Long> 
             "group by s.stationId order by max(s.startedAt) desc")
     List<Object[]> findRecentStations(@Param("userId") Long userId, Pageable pageable);
 
+    @Query("select count(distinct s.userId) from PlaySession s where s.endedAt is null " +
+            "and coalesce(s.lastHeartbeatAt, s.startedAt) > :cutoff")
+    long countListeningSince(@Param("cutoff") Instant cutoff);
+
     long countByUserId(Long userId);
 
     @Query("select s from PlaySession s where s.endedAt is null " +

@@ -8,7 +8,7 @@ import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
 import { WelcomeGate } from './components/WelcomeGate';
 import { GridIcon, ListIcon, SearchIcon, LockIcon, MicIcon, GitHubIcon, InstagramIcon, MailIcon } from './components/icons';
-import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, getStation, removeFavorite, searchStations } from './api/catalog';
+import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, getStation, removeFavorite, reportPresence, searchStations, type OnlineStats } from './api/catalog';
 import { logout } from './api/auth';
 import { storage } from './api/storage';
 import type { CitySummary, GenreSummary, MeResponse, StationSummary } from './api/types';
@@ -156,6 +156,7 @@ export default function App() {
   // demorava ou tentava de novo, parecendo que o app tinha travado.
   const [stationsRetrying, setStationsRetrying] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
+  const [onlineStats, setOnlineStats] = useState<OnlineStats | null>(null);
   const [nowPlayingOpen, setNowPlayingOpen] = useState(false);
 
   const isMobile = useIsMobile();
@@ -388,6 +389,30 @@ export default function App() {
     }
   }
 
+  // Presença: a cada minuto (e quando a aba volta a ficar visível) avisa o
+  // servidor que o app está aberto e recebe de volta quantas pessoas estão
+  // online / ouvindo. Falha aqui nunca atrapalha nada — só some o contador.
+  useEffect(() => {
+    if (!entered) return;
+    let cancelled = false;
+    const tick = () => {
+      if (document.visibilityState === 'hidden') return;
+      reportPresence()
+        .then((s) => {
+          if (!cancelled) setOnlineStats(s);
+        })
+        .catch(() => {});
+    };
+    tick();
+    const id = window.setInterval(tick, 60_000);
+    document.addEventListener('visibilitychange', tick);
+    return () => {
+      cancelled = true;
+      window.clearInterval(id);
+      document.removeEventListener('visibilitychange', tick);
+    };
+  }, [entered]);
+
   // Abriu por um link compartilhado: deixa a rádio selecionada e pronta pra
   // dar play (o navegador não deixa tocar sozinho sem um toque da pessoa).
   useEffect(() => {
@@ -593,6 +618,17 @@ export default function App() {
                 <div className="cw-display" style={{ fontSize: isMobile ? 22 : 26, letterSpacing: '-.01em' }}>{pageTitle}</div>
                 <div style={{ font: '500 13px Figtree', color: 'var(--ink60)' }}>{n === 1 ? '1 emissora' : `${n} emissoras`}</div>
               </div>
+              {onlineStats && onlineStats.online > 0 && (
+                <div
+                  title="Pessoas com o Carra Wave aberto agora"
+                  style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: 'var(--surf2)', font: '600 12.5px Figtree', color: 'var(--ink60)' }}
+                >
+                  <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
+                  {onlineStats.listening > 0
+                    ? `${onlineStats.listening} ${onlineStats.listening === 1 ? 'pessoa ouvindo' : 'pessoas ouvindo'} agora · ${onlineStats.online} online`
+                    : `${onlineStats.online} online agora`}
+                </div>
+              )}
 
               {showChips && stateOptions.length > 0 && (
                 <div style={{ marginTop: 16 }}>
