@@ -3,9 +3,24 @@ import { stationGradient, stationInitials } from './gradient';
 
 export type ShareResult = 'shared' | 'copied' | 'downloaded' | 'cancelled' | 'failed';
 
+/** Endereço do site, usado na mensagem de convite. */
+export const SITE_URL = 'https://carrawave-phi.vercel.app/';
+
+/** Mensagem pronta que acompanha o compartilhamento. */
+export function shareMessage(station: Pick<StationSummary, 'id' | 'name'>): string {
+  return [
+    `🎶 Estou ouvindo ${station.name} no Carra Wave!`,
+    '',
+    'São rádios de todo o Brasil, ao vivo e de graça, direto no celular. Vem ouvir comigo 👇',
+    stationShareUrl(station),
+    '',
+    `Conheça o Carra Wave: ${SITE_URL}`,
+  ].join('\n');
+}
+
 /** Link que abre o app já com a rádio selecionada. */
 export function stationShareUrl(station: Pick<StationSummary, 'id'>): string {
-  return `${window.location.origin}/?radio=${encodeURIComponent(station.id)}`;
+  return `${SITE_URL}?radio=${encodeURIComponent(station.id)}`;
 }
 
 function gradientColors(station: StationSummary): [string, string] {
@@ -156,7 +171,7 @@ function downloadBlob(blob: Blob, filename: string) {
  */
 export async function shareStation(station: StationSummary): Promise<ShareResult> {
   const url = stationShareUrl(station);
-  const text = `Estou ouvindo ${station.name} no Carra Wave 🎶\n${url}`;
+  const text = shareMessage(station);
   const blob = await makeStoryImage(station);
   const file = blob ? new File([blob], `carra-wave-${station.slug}.png`, { type: 'image/png' }) : null;
   const copied = await copyText(url);
