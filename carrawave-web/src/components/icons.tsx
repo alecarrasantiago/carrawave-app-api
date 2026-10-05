@@ -178,3 +178,21 @@ export function ChevronDownIcon({ size = 22, color = 'currentColor' }: IconProps
     </svg>
   );
 }
+
+export function RockIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.1} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M13 2.5L5 13.5h6l-1 8 8-11h-6l1-8z" />
+    </svg>
+  );
+}
+
+export function PandeiroIcon({ size = 20, color = 'currentColor' }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.1} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="8.2" />
+      <circle cx="12" cy="12" r="3.2" />
+      <path d="M12 3.8v-1.6M12 21.8v-1.6M3.8 12H2.2M21.8 12h-1.6" />
+    </svg>
+  );
+}

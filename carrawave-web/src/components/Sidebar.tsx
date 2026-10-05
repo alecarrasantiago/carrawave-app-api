@@ -1,15 +1,17 @@
 import type { MeResponse, StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
-import { CarnivalMaskIcon, ClockIcon, CompassIcon, HeartIcon, HomeIcon, MicIcon, SettingsIcon } from './icons';
+import { CarnivalMaskIcon, ClockIcon, CompassIcon, HeartIcon, HomeIcon, MicIcon, PandeiroIcon, RockIcon, SettingsIcon } from './icons';
 import { useIsMobile } from '../hooks/useIsMobile';
 
-export type NavKey = 'home' | 'explore' | 'podcasts' | 'samba' | 'fav' | 'recent' | 'settings';
+export type NavKey = 'home' | 'explore' | 'podcasts' | 'samba' | 'rock' | 'pagode' | 'fav' | 'recent' | 'settings';
 
 const NAV: { key: NavKey; label: string }[] = [
   { key: 'home', label: 'Início' },
   { key: 'explore', label: 'Explorar' },
   { key: 'podcasts', label: 'Podcasts' },
   { key: 'samba', label: 'Samba Enredo' },
+  { key: 'rock', label: 'Rock' },
+  { key: 'pagode', label: 'Pagode e Samba' },
   { key: 'fav', label: 'Favoritos' },
   { key: 'recent', label: 'Recentes' },
   { key: 'settings', label: 'Configurações' },
@@ -20,6 +22,8 @@ const NAV_ICON: Record<NavKey, (color: string) => JSX.Element> = {
   explore: (color) => <CompassIcon size={21} color={color} />,
   podcasts: (color) => <MicIcon size={20} color={color} />,
   samba: (color) => <CarnivalMaskIcon size={20} color={color} />,
+  rock: (color) => <RockIcon size={20} color={color} />,
+  pagode: (color) => <PandeiroIcon size={20} color={color} />,
   fav: (color) => <HeartIcon size={20} filled={false} color={color} />,
   recent: (color) => <ClockIcon size={20} color={color} />,
   settings: (color) => <SettingsIcon size={20} color={color} />,
@@ -52,6 +56,8 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
           bottom: bottomOffset,
           zIndex: 25,
           display: 'flex',
+          overflowX: 'auto',
+          scrollbarWidth: 'none',
           background: 'var(--surf)',
           borderTop: '1px solid var(--line)',
           paddingBottom: 'env(safe-area-inset-bottom, 0px)',
@@ -65,7 +71,8 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
               key={n.key}
               onClick={() => onNavChange(n.key)}
               style={{
-                flex: 1,
+                flex: '1 0 auto',
+                minWidth: 66,
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -76,7 +83,7 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
               }}
             >
               {NAV_ICON[n.key](color)}
-              <span style={{ font: '600 10px Figtree', color, letterSpacing: '-.01em' }}>{n.label}</span>
+              <span style={{ font: '600 10px Figtree', color, letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{n.label}</span>
             </div>
           );
         })}

@@ -30,6 +30,8 @@ const TITLES: Record<NavKey, string> = {
   explore: 'Explorar rádios',
   podcasts: 'Melhores podcasts',
   samba: 'Samba Enredo',
+  rock: 'Rock',
+  pagode: 'Pagode e Samba',
   fav: 'Suas favoritas',
   recent: 'Ouvidas recentemente',
   settings: 'Configurações',
@@ -40,6 +42,8 @@ const SOURCE_BY_NAV: Record<NavKey, PlaybackSource> = {
   explore: 'EXPLORE',
   podcasts: 'EXPLORE',
   samba: 'EXPLORE',
+  rock: 'EXPLORE',
+  pagode: 'EXPLORE',
   fav: 'FAVORITES',
   recent: 'HISTORY',
   settings: 'EXPLORE',
@@ -76,6 +80,14 @@ const UF_NAMES: Record<string, string> = {
 };
 
 const PAGE_SIZE = 60;
+
+// Abas fixas, cada uma mostrando um gênero inteiro (sem filtro de estado):
+// aba -> slug do gênero no catálogo.
+const GENRE_TABS: Partial<Record<NavKey, string>> = {
+  samba: 'samba-enredo',
+  rock: 'rock',
+  pagode: 'pagode',
+};
 
 const RETRY_DELAYS_MS = [1500, 3000, 6000, 10000, 15000];
 
@@ -248,12 +260,12 @@ export default function App() {
           // mostra um aviso de "em breve" em vez de listar rádios ao vivo
           // como se fossem podcast.
           setStations([]);
-        } else if (nav === 'samba') {
-          // Aba fixa com as rádios de samba-enredo/carnaval do Rio
+        } else if (GENRE_TABS[nav]) {
+          // Abas fixas (Samba Enredo, Rock, Pagode e Samba) com as rádios
           // verificadas manualmente — sempre mostra todas de uma vez.
-          const sambaGenre = genres.find((g) => g.slug === 'samba-enredo');
+          const tabGenre = genres.find((g) => g.slug === GENRE_TABS[nav]);
           const res = await withRetry(() => searchStations({
-            genre: sambaGenre?.id,
+            genre: tabGenre?.id,
             sort: 'popular',
             page: 0,
             size: PAGE_SIZE,
@@ -299,10 +311,10 @@ export default function App() {
     // entravam aqui só como referência de array — toda vez que qualquer um
     // chegava da API (em momentos diferentes), a MESMA busca de rádios
     // disparava de novo, multiplicando requisições logo na abertura do app.
-  }, [entered, retryKey, nav, chip, query, stateFilter]);
+  }, [entered, retryKey, nav, chip, query, stateFilter, GENRE_TABS[nav] ? genres.length : 0]);
 
   async function loadMore() {
-    if (loadingMore || nav === 'podcasts' || nav === 'samba' || nav === 'fav' || nav === 'recent') return;
+    if (loadingMore || nav === 'podcasts' || GENRE_TABS[nav] || nav === 'fav' || nav === 'recent') return;
     // Trava a sequência atual: se o filtro mudar (e a busca debounced
     // disparar de novo) antes dessa página extra voltar, o resultado é
     // descartado em vez de ser anexado à lista errada.
