@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
-import { CheckIcon, ChevronDownIcon, ClockIcon, HeartIcon, PauseIcon, PlayIcon, VolumeIcon } from './icons';
+import { CheckIcon, ChevronDownIcon, ClockIcon, HeartIcon, PauseIcon, PlayIcon, ShareIcon, VolumeIcon } from './icons';
 import type { SleepTimerOption } from '../store/playerStore';
 import { useNowPlaying } from '../hooks/useNowPlaying';
 
@@ -21,6 +21,7 @@ interface Props {
   sleepTimer: SleepTimerOption;
   onTogglePlay: () => void;
   onToggleFavorite: () => void;
+  onShare?: () => void;
   onVolumeChange: (v: number) => void;
   onSetSleepTimer: (minutes: SleepTimerOption) => void;
 }
@@ -42,6 +43,7 @@ export function NowPlayingSheet({
   sleepTimer,
   onTogglePlay,
   onToggleFavorite,
+  onShare,
   onVolumeChange,
   onSetSleepTimer,
 }: Props) {
@@ -72,7 +74,17 @@ export function NowPlayingSheet({
         <div style={{ font: '700 11px Figtree', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
           Tocando agora
         </div>
-        <div style={{ width: 38, height: 38 }} />
+        {onShare ? (
+          <div
+            onClick={onShare}
+            aria-label="Compartilhar rádio"
+            style={{ cursor: 'pointer', width: 38, height: 38, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surf2)' }}
+          >
+            <ShareIcon size={19} color="var(--ink)" />
+          </div>
+        ) : (
+          <div style={{ width: 38, height: 38 }} />
+        )}
       </div>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '0 32px', overflow: 'hidden' }}>

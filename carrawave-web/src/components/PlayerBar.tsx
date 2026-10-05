@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
-import { CheckIcon, ClockIcon, HeartIcon, PauseIcon, PlayIcon, VolumeIcon } from './icons';
+import { CheckIcon, ClockIcon, HeartIcon, PauseIcon, PlayIcon, ShareIcon, VolumeIcon } from './icons';
 import type { SleepTimerOption } from '../store/playerStore';
 import { useIsMobile } from '../hooks/useIsMobile';
 
@@ -19,6 +19,7 @@ interface Props {
   sleepTimer: SleepTimerOption;
   onTogglePlay: () => void;
   onToggleFavorite: () => void;
+  onShare?: () => void;
   onVolumeChange: (v: number) => void;
   onSetSleepTimer: (minutes: SleepTimerOption) => void;
   onExpand?: () => void;
@@ -34,6 +35,7 @@ export function PlayerBar({
   sleepTimer,
   onTogglePlay,
   onToggleFavorite,
+  onShare,
   onVolumeChange,
   onSetSleepTimer,
   onExpand,
@@ -315,6 +317,11 @@ export function PlayerBar({
         <div onClick={onToggleFavorite} className="cw-hover-soft" style={{ cursor: 'pointer', flex: 'none', width: 36, height: 36, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <HeartIcon size={19} filled={favorited} color={favorited ? 'var(--accent)' : 'var(--ink40)'} />
         </div>
+        {onShare && (
+          <div onClick={onShare} title="Compartilhar" aria-label="Compartilhar rádio" className="cw-hover-soft" style={{ cursor: 'pointer', flex: 'none', width: 36, height: 36, borderRadius: 999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <ShareIcon size={18} color="var(--ink40)" />
+          </div>
+        )}
         <div style={{ flex: 1 }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <div

@@ -8,7 +8,7 @@ import { Toast } from './components/Toast';
 import { AuthModal } from './components/AuthModal';
 import { WelcomeGate } from './components/WelcomeGate';
 import { GridIcon, ListIcon, SearchIcon, LockIcon, MicIcon, GitHubIcon, InstagramIcon, MailIcon } from './components/icons';
-import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, removeFavorite, searchStations } from './api/catalog';
+import { addFavorite, fetchCities, fetchFavorites, fetchGenres, fetchHistory, fetchMe, getStation, removeFavorite, searchStations } from './api/catalog';
 import { logout } from './api/auth';
 import { storage } from './api/storage';
 import type { CitySummary, GenreSummary, MeResponse, StationSummary } from './api/types';
@@ -16,8 +16,17 @@ import { usePlayerStore } from './store/playerStore';
 import { audioEngine, type PlaybackSource } from './audio/AudioEngine';
 import { useIsMobile } from './hooks/useIsMobile';
 import { useInstallPrompt } from './hooks/useInstallPrompt';
+import { shareStation } from './utils/share';
 
 const ENTERED_KEY = 'cw.entered';
+// Link compartilhado (?radio=<id>): lido uma vez na abertura do app.
+const SHARED_RADIO_ID: string | null = (() => {
+  try {
+    return new URLSearchParams(window.location.search).get('radio');
+  } catch {
+    return null;
+  }
+})();
 const SIDEBAR_WIDTH = 238;
 // Altura reservada pra barra de navegação inferior no mobile (conteúdo +
 // uma margem generosa pra cobrir a safe-area do notch/home-indicator do
@@ -147,6 +156,8 @@ export default function App() {
   const [nowPlayingOpen, setNowPlayingOpen] = useState(false);
 
   const isMobile = useIsMobile();
+  const isMobileRef = useRef(isMobile);
+  isMobileRef.current = isMobile;
 
   const current = usePlayerStore((s) => s.current);
   const isPlaying = usePlayerStore((s) => s.isPlaying);
@@ -372,6 +383,47 @@ export default function App() {
       usePlayerStore.getState().toggleFavorite(station.id);
       usePlayerStore.getState().showToast('Não foi possível atualizar os favoritos.');
     }
+  }
+
+  // Abriu por um link compartilhado: deixa a rádio selecionada e pronta pra
+  // dar play (o navegador não deixa tocar sozinho sem um toque da pessoa).
+  useEffect(() => {
+    if (!entered || !SHARED_RADIO_ID) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const st = await withRetry(() => getStation(SHARED_RADIO_ID), () => {});
+        if (cancelled) return;
+        usePlayerStore.setState({ current: st, isPlaying: false });
+        usePlayerStore.getState().showToast(`${st.name} — toque em play para ouvir`);
+        if (isMobileRef.current) setNowPlayingOpen(true);
+      } catch {
+        if (!cancelled) usePlayerStore.getState().showToast('Não encontramos essa rádio.');
+      } finally {
+        try {
+          window.history.replaceState(null, '', window.location.pathname);
+        } catch {
+          /* ignore */
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [entered]);
+
+  async function handleShare() {
+    const st = usePlayerStore.getState().current;
+    if (!st) return;
+    const r = await shareStation(st);
+    const msgs: Record<string, string> = {
+      copied: 'Link copiado — no Story, cole no adesivo "Link"',
+      shared: 'Compartilhado',
+      downloaded: 'Imagem salva e link copiado',
+      failed: 'Não foi possível compartilhar agora.',
+    };
+    if (r !== 'cancelled') usePlayerStore.getState().showToast(msgs[r]);
   }
 
   async function playStation(station: StationSummary) {
@@ -750,6 +802,7 @@ export default function App() {
         sleepTimer={sleepTimer}
         onTogglePlay={togglePlay}
         onToggleFavorite={() => current && toggleFavorite(current)}
+        onShare={handleShare}
         onVolumeChange={handleVolumeChange}
         onSetSleepTimer={handleSetSleepTimer}
         onExpand={() => setNowPlayingOpen(true)}
@@ -768,6 +821,7 @@ export default function App() {
           sleepTimer={sleepTimer}
           onTogglePlay={togglePlay}
           onToggleFavorite={() => current && toggleFavorite(current)}
+          onShare={handleShare}
           onVolumeChange={handleVolumeChange}
           onSetSleepTimer={handleSetSleepTimer}
         />
