@@ -455,6 +455,18 @@ export default function App() {
   }
 
   async function playStation(station: StationSummary) {
+    // Tocar de novo na rádio que já está carregada NÃO recarrega o stream:
+    // o primeiro toque toca, o segundo abre a tela só com ela (onde fica o
+    // botão de compartilhar). Se estava pausada, só retoma.
+    const cur = usePlayerStore.getState().current;
+    if (cur && cur.id === station.id && audioEngine.loadedStationId === station.id) {
+      setNowPlayingOpen(true);
+      if (!usePlayerStore.getState().isPlaying) {
+        usePlayerStore.getState().setPlaying(true);
+        await audioEngine.resume(cur, SOURCE_BY_NAV[nav]);
+      }
+      return;
+    }
     usePlayerStore.getState().play(station);
     usePlayerStore.getState().showToast(`Tocando ${station.name}`);
     await audioEngine.load(station, SOURCE_BY_NAV[nav]);
@@ -467,7 +479,12 @@ export default function App() {
       usePlayerStore.getState().setPlaying(false);
     } else {
       usePlayerStore.getState().setPlaying(true);
-      await audioEngine.resume(current, SOURCE_BY_NAV[nav]);
+      if (audioEngine.loadedStationId !== current.id) {
+        // Rádio escolhida por link compartilhado: ainda não foi carregada.
+        await audioEngine.load(current, SOURCE_BY_NAV[nav]);
+      } else {
+        await audioEngine.resume(current, SOURCE_BY_NAV[nav]);
+      }
     }
   }
 
@@ -849,7 +866,7 @@ export default function App() {
         bottomOffset={isMobile ? MOBILE_TABBAR_H : 0}
       />
 
-      {isMobile && (
+      {(
         <NowPlayingSheet
           open={nowPlayingOpen}
           onClose={() => setNowPlayingOpen(false)}

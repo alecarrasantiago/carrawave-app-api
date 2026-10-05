@@ -34,6 +34,8 @@ class AudioEngine {
   private audio: HTMLAudioElement;
   private hls: Hls | null = null;
   private currentSessionId: string | null = null;
+  // Id da rádio cujo stream está de fato carregado no <audio> (pode estar pausada).
+  loadedStationId: string | null = null;
   private heartbeatHandle: number | null = null;
   private sleepTimerHandle: number | null = null;
   private startedAt: number | null = null;
@@ -136,6 +138,7 @@ class AudioEngine {
   }
 
   async load(station: StationSummary, source: PlaybackSource = 'EXPLORE') {
+    this.loadedStationId = station.id;
     this.teardownHls();
     this.stopTelemetry('SWITCHED_STATION');
     this.updateMediaSessionMetadata(station);

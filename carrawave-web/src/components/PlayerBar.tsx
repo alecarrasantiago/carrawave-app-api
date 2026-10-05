@@ -305,7 +305,7 @@ export function PlayerBar({
         >
           {stationInitials(station)}
         </div>
-        <div style={{ flex: 'none', width: 190, minWidth: 0 }}>
+        <div style={{ flex: 'none', width: 190, minWidth: 0, cursor: onExpand ? 'pointer' : undefined }} onClick={() => onExpand?.()}>
           <div style={{ font: '700 14px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
             <div style={{ flex: 'none', width: 5, height: 5, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
