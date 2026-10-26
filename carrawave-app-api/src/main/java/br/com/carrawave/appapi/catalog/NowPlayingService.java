@@ -1,6 +1,5 @@
 package br.com.carrawave.appapi.catalog;
 
-import br.com.carrawave.appapi.common.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -31,32 +30,33 @@ public class NowPlayingService {
     private static final long CACHE_TTL_MILLIS = 20_000;
     private static final long FETCH_TIMEOUT_SECONDS = 6;
 
-    private final StationRepository stationRepository;
+    private final StreamInfoCache streamInfoCache;
     private final ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
     private final Map<Long, CacheEntry> cache = new ConcurrentHashMap<>();
 
-    public NowPlayingService(StationRepository stationRepository) {
-        this.stationRepository = stationRepository;
+    public NowPlayingService(StreamInfoCache streamInfoCache) {
+        this.streamInfoCache = streamInfoCache;
     }
 
     public String getNowPlaying(UUID stationPublicId) {
-        Station station = stationRepository.findByPublicId(stationPublicId)
-                .orElseThrow(ApiException::stationNotFound);
+        // Em memória: o app pergunta isto a cada ~20 s por ouvinte, e ir ao
+        // banco toda vez mantinha o Neon acordado.
+        StreamInfoCache.StreamInfo station = streamInfoCache.get(stationPublicId);
 
         // HLS não usa o protocolo ICY (o metadado, quando existe, vem
         // embutido nos segmentos via tags ID3) — não vale a pena tentar.
-        if ("HLS".equalsIgnoreCase(station.getStreamFormat())) {
+        if ("HLS".equalsIgnoreCase(station.streamFormat())) {
             return null;
         }
 
-        long stationId = station.getId();
+        long stationId = station.stationId();
         CacheEntry cached = cache.get(stationId);
         long now = System.currentTimeMillis();
         if (cached != null && now - cached.fetchedAt < CACHE_TTL_MILLIS) {
             return cached.title;
         }
 
-        String title = fetchWithTimeout(station.getStreamUrl());
+        String title = fetchWithTimeout(station.streamUrl());
         cache.put(stationId, new CacheEntry(title, now));
         return title;
     }

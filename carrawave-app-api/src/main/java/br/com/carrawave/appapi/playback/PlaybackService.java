@@ -13,14 +13,17 @@ import br.com.carrawave.appapi.user.AppUser;
 import br.com.carrawave.appapi.user.AppUserRepository;
 import br.com.carrawave.appapi.user.Device;
 import br.com.carrawave.appapi.user.DeviceRepository;
+import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -32,13 +35,19 @@ public class PlaybackService {
     private final AppUserRepository appUserRepository;
     private final DeviceRepository deviceRepository;
     private final StationRepository stationRepository;
+    private final ListeningTracker tracker;
+    private final TransactionTemplate transactionTemplate;
 
     public PlaybackService(
             PlaySessionRepository playSessionRepository,
             AppUserRepository appUserRepository,
             DeviceRepository deviceRepository,
-            StationRepository stationRepository
+            StationRepository stationRepository,
+            ListeningTracker tracker,
+            TransactionTemplate transactionTemplate
     ) {
+        this.tracker = tracker;
+        this.transactionTemplate = transactionTemplate;
         this.playSessionRepository = playSessionRepository;
         this.appUserRepository = appUserRepository;
         this.deviceRepository = deviceRepository;
@@ -61,22 +70,50 @@ public class PlaybackService {
         session.setStartedAt(request.startedAt());
         session.setLastHeartbeatAt(request.startedAt());
         playSessionRepository.save(session);
+        tracker.register(session.getPublicId(), principal.userId(), principal.deviceId(),
+                station.getId(), Instant.now(), 0);
 
         return new StartPlaybackResponse(session.getPublicId());
     }
 
+    /**
+     * Heartbeat (a cada ~60 s enquanto toca) NÃO vai mais ao banco: só
+     * atualiza a sessão em memória. Assim o Neon pode dormir mesmo com gente
+     * ouvindo. O banco só é consultado se a sessão não está em memória
+     * (servidor reiniciou ou a sessão tinha expirado).
+     */
     @Transactional
     public void heartbeat(AuthenticatedUser principal, UUID sessionId, HeartbeatRequest request) {
+        ListeningTracker.Active active = tracker.get(sessionId);
+        if (active != null) {
+            if (!active.isOwnedBy(principal.userId(), principal.deviceId())) {
+                throw ApiException.sessionNotFound();
+            }
+            tracker.heartbeat(active, request.playedSeconds());
+            return;
+        }
+        // Não está em memória: carrega do banco uma vez e volta a acompanhar.
         PlaySession session = resolveOwnedSession(principal, sessionId);
+        Instant now = Instant.now();
         session.setPlayedSeconds(request.playedSeconds());
-        session.setLastHeartbeatAt(Instant.now());
+        session.setLastHeartbeatAt(now);
+        session.setEndedAt(null);
+        session.setEndReason(null);
         playSessionRepository.save(session);
+        tracker.register(session.getPublicId(), principal.userId(), principal.deviceId(),
+                session.getStationId(), now, request.playedSeconds());
     }
 
     @Transactional
     public void stop(AuthenticatedUser principal, UUID sessionId, StopPlaybackRequest request) {
+        ListeningTracker.Active active = tracker.get(sessionId);
+        if (active != null && !active.isOwnedBy(principal.userId(), principal.deviceId())) {
+            throw ApiException.sessionNotFound();
+        }
         PlaySession session = resolveOwnedSession(principal, sessionId);
+        tracker.remove(sessionId);
         session.setPlayedSeconds(request.playedSeconds());
+        session.setLastHeartbeatAt(Instant.now());
         session.setEndedAt(Instant.now());
         session.setEndReason(request.reason());
         playSessionRepository.save(session);
@@ -85,19 +122,68 @@ public class PlaybackService {
     /**
      * Fecha sessões "órfãs" — sem heartbeat há mais de 5 minutos — porque o
      * cliente pode ter morrido (app crashou, conexão caiu) sem avisar /stop.
+     * A verificação é em memória: o banco só é tocado se houver algo pra fechar.
      */
     @Scheduled(fixedDelay = 5 * 60_000)
     @Transactional
     public void closeOrphanSessions() {
-        Instant cutoff = Instant.now().minus(Duration.ofMinutes(5));
-        var orphans = playSessionRepository.findOrphanSessions(cutoff);
-        for (PlaySession session : orphans) {
+        List<ListeningTracker.Active> stale = tracker.removeStale(Instant.now().minus(Duration.ofMinutes(5)));
+        if (stale.isEmpty()) {
+            return;
+        }
+        Instant now = Instant.now();
+        for (ListeningTracker.Active a : stale) {
+            playSessionRepository.findByPublicId(a.publicId()).ifPresent(session -> {
+                session.setPlayedSeconds(a.playedSeconds());
+                session.setLastHeartbeatAt(a.lastHeartbeatAt());
+                session.setEndedAt(now);
+                session.setEndReason("TIMEOUT");
+                playSessionRepository.save(session);
+            });
+        }
+        log.info("Fechadas {} sessões de reprodução órfãs", stale.size());
+    }
+
+    /**
+     * Uma única vez, 10 min depois de subir: fecha sessões que ficaram abertas
+     * no banco de antes de um reinício e cujo app não voltou a mandar heartbeat.
+     */
+    @Scheduled(initialDelay = 10 * 60_000, fixedDelay = Long.MAX_VALUE)
+    @Transactional
+    public void closeSessionsLeftOpenBeforeRestart() {
+        Instant cutoff = Instant.now().minus(Duration.ofMinutes(10));
+        var leftovers = playSessionRepository.findOrphanSessions(cutoff).stream()
+                .filter(s -> tracker.get(s.getPublicId()) == null)
+                .toList();
+        for (PlaySession session : leftovers) {
             session.setEndedAt(Instant.now());
             session.setEndReason("TIMEOUT");
         }
-        if (!orphans.isEmpty()) {
-            playSessionRepository.saveAll(orphans);
-            log.info("Fechadas {} sessões de reprodução órfãs", orphans.size());
+        if (!leftovers.isEmpty()) {
+            playSessionRepository.saveAll(leftovers);
+            log.info("Fechadas {} sessões abertas antes do reinício", leftovers.size());
+        }
+    }
+
+    /** No desligamento (deploy/reinício), grava o progresso das sessões em memória. */
+    @PreDestroy
+    public void flushOnShutdown() {
+        var active = tracker.all();
+        if (active.isEmpty()) {
+            return;
+        }
+        try {
+            transactionTemplate.executeWithoutResult(status -> {
+                for (ListeningTracker.Active a : active) {
+                    playSessionRepository.findByPublicId(a.publicId()).ifPresent(session -> {
+                        session.setPlayedSeconds(a.playedSeconds());
+                        session.setLastHeartbeatAt(a.lastHeartbeatAt());
+                        playSessionRepository.save(session);
+                    });
+                }
+            });
+        } catch (Exception e) {
+            log.warn("Não foi possível gravar as sessões abertas no desligamento: {}", e.toString());
         }
     }
 

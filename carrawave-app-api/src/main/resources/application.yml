@@ -22,6 +22,16 @@ spring:
     url: ${DATABASE_URL}
     username: ${DATABASE_USER}
     password: ${DATABASE_PASSWORD}
+    # Neon grátis: o banco só "dorme" (e para de gastar a cota de compute)
+    # depois de 5 min SEM conexão. Por padrão o Hikari mantém 10 conexões
+    # abertas para sempre e as recria a cada 30 min — isso acordava o banco
+    # de meia em meia hora mesmo sem ninguém usando. Com minimum-idle 0 o
+    # pool esvazia sozinho 30 s depois da última consulta.
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 5
+      idle-timeout: 30000
+      connection-timeout: 20000
   jpa:
     hibernate:
       ddl-auto: validate
@@ -60,6 +70,13 @@ carrawave:
     auth-capacity: ${AUTH_RATE_LIMIT_CAPACITY:10}
 
 management:
+  # O /actuator/health é chamado a cada 5 min pelo keep-alive do Render
+  # (GitHub Actions + KeepAliveScheduler). Com o check do banco ligado, cada
+  # ping fazia uma consulta no Neon e ele NUNCA dormia — foi isso que estourou
+  # a cota grátis de compute. O health agora só diz se a aplicação está de pé.
+  health:
+    db:
+      enabled: false
   endpoints:
     web:
       exposure:

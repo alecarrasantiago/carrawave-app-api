@@ -1,8 +1,7 @@
 package br.com.carrawave.appapi.stats;
 
-import br.com.carrawave.appapi.playback.PlaySessionRepository;
+import br.com.carrawave.appapi.playback.ListeningTracker;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -18,10 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
  *   banco, e se o servidor reiniciar o número se reconstrói em 1 minuto.
  *   Conta como online quem avisou nos últimos 2,5 min.
  * - listening: sessões de reprodução abertas com heartbeat recente (o app
- *   manda heartbeat a cada 60 s enquanto toca).
+ *   manda heartbeat a cada 60 s enquanto toca), também em memória
+ *   ({@link ListeningTracker}).
  *
- * O resultado fica em cache por 15 s, então muita gente chamando junto não
- * vira muita consulta ao banco.
+ * Nada aqui consulta o banco — o app chama isto a cada 60 s, e se fosse ao
+ * banco o Neon nunca dormiria.
  */
 @Service
 public class PresenceService {
@@ -31,14 +31,14 @@ public class PresenceService {
     private static final Duration FORGET_AFTER = Duration.ofMinutes(10);
     private static final Duration CACHE_TTL = Duration.ofSeconds(15);
 
-    private final PlaySessionRepository playSessionRepository;
+    private final ListeningTracker listeningTracker;
     private final Map<UUID, Instant> lastSeenByDevice = new ConcurrentHashMap<>();
 
     private volatile OnlineStats cached = new OnlineStats(0, 0);
     private volatile Instant cachedAt = Instant.EPOCH;
 
-    public PresenceService(PlaySessionRepository playSessionRepository) {
-        this.playSessionRepository = playSessionRepository;
+    public PresenceService(ListeningTracker listeningTracker) {
+        this.listeningTracker = listeningTracker;
     }
 
     public void touch(UUID deviceId) {
@@ -47,7 +47,6 @@ public class PresenceService {
         }
     }
 
-    @Transactional(readOnly = true)
     public OnlineStats snapshot() {
         Instant now = Instant.now();
         if (Duration.between(cachedAt, now).compareTo(CACHE_TTL) < 0) {
@@ -63,7 +62,7 @@ public class PresenceService {
 
             Instant onlineSince = now.minus(ONLINE_WINDOW);
             long online = lastSeenByDevice.values().stream().filter(seen -> seen.isAfter(onlineSince)).count();
-            long listening = playSessionRepository.countListeningSince(now.minus(LISTENING_WINDOW));
+            long listening = listeningTracker.countListening(now.minus(LISTENING_WINDOW));
 
             cached = new OnlineStats(Math.max(online, listening), listening);
             cachedAt = now;

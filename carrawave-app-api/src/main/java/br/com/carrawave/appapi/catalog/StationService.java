@@ -2,7 +2,7 @@ package br.com.carrawave.appapi.catalog;
 
 import br.com.carrawave.appapi.catalog.dto.*;
 import br.com.carrawave.appapi.common.ApiException;
-import br.com.carrawave.appapi.playback.PlaySessionRepository;
+import br.com.carrawave.appapi.playback.ListeningTracker;
 import br.com.carrawave.appapi.security.AuthenticatedUser;
 import br.com.carrawave.appapi.user.AppUser;
 import br.com.carrawave.appapi.user.AppUserRepository;
@@ -31,7 +31,8 @@ public class StationService {
     private final CityRepository cityRepository;
     private final GenreRepository genreRepository;
     private final FavoriteRepository favoriteRepository;
-    private final PlaySessionRepository playSessionRepository;
+    private final ListeningTracker listeningTracker;
+    private final StreamInfoCache streamInfoCache;
     private final AppUserRepository appUserRepository;
 
     public StationService(
@@ -39,14 +40,16 @@ public class StationService {
             CityRepository cityRepository,
             GenreRepository genreRepository,
             FavoriteRepository favoriteRepository,
-            PlaySessionRepository playSessionRepository,
+            ListeningTracker listeningTracker,
+            StreamInfoCache streamInfoCache,
             AppUserRepository appUserRepository
     ) {
         this.stationRepository = stationRepository;
         this.cityRepository = cityRepository;
         this.genreRepository = genreRepository;
         this.favoriteRepository = favoriteRepository;
-        this.playSessionRepository = playSessionRepository;
+        this.listeningTracker = listeningTracker;
+        this.streamInfoCache = streamInfoCache;
         this.appUserRepository = appUserRepository;
     }
 
@@ -116,14 +119,12 @@ public class StationService {
     }
 
     public Map<String, Object> getStreamToken(UUID stationPublicId) {
-        Station station = stationRepository.findByPublicId(stationPublicId)
-                .orElseThrow(ApiException::stationNotFound);
         // Como agregamos streams públicos de terceiros (a própria emissora hospeda
         // o áudio), não há o que assinar de fato — devolvemos a URL real da
         // emissora no mesmo formato do contrato, para o cliente não precisar
         // de dois caminhos diferentes.
         return Map.of(
-                "url", station.getStreamUrl(),
+                "url", streamInfoCache.get(stationPublicId).streamUrl(),
                 "expiresAt", Instant.now().plus(Duration.ofHours(1)).toString()
         );
     }
@@ -235,14 +236,8 @@ public class StationService {
     }
 
     private Map<Long, Long> listenerCounts(List<Long> stationIds) {
-        if (stationIds.isEmpty()) {
-            return Map.of();
-        }
-        Instant cutoff = Instant.now().minus(Duration.ofMinutes(5));
-        return playSessionRepository.countActiveListeners(stationIds, cutoff).stream()
-                .collect(Collectors.toMap(
-                        PlaySessionRepository.StationListenerCount::getStationId,
-                        PlaySessionRepository.StationListenerCount::getListeners));
+        // Em memória (ver ListeningTracker): não acorda o banco.
+        return listeningTracker.listenersByStation(stationIds, Duration.ofMinutes(5));
     }
 
     private StationSummary toSummary(Station station, Set<Long> favoriteIds, Map<Long, Long> listeners) {
