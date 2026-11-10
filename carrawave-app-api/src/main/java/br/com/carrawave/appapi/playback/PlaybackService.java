@@ -205,7 +205,19 @@ public class PlaybackService {
     }
 
     private Device resolveDevice(AuthenticatedUser principal) {
-        return deviceRepository.findByDeviceId(principal.deviceId())
-                .orElseThrow(ApiException::invalidToken);
+        // Se o aparelho do token não existe no banco (ex.: foi registrado
+        // durante a troca de banco e se perdeu), recria em vez de falhar —
+        // o usuário existe e o token é válido, não há por que travar o play.
+        return deviceRepository.findByDeviceId(principal.deviceId()).orElseGet(() -> {
+            AppUser user = resolveUser(principal);
+            Device d = new Device();
+            d.setDeviceId(principal.deviceId());
+            d.setUser(user);
+            d.setPlatform(principal.platform() == null ? "WEB" : principal.platform());
+            d.setFirstSeenAt(Instant.now());
+            d.setLastSeenAt(Instant.now());
+            log.info("Aparelho {} recriado para o usuário {}", principal.deviceId(), principal.userId());
+            return deviceRepository.save(d);
+        });
     }
 }
