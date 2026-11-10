@@ -1,0 +1,23 @@
+name: Keep alive (banco Supabase)
+
+# O Supabase grátis pausa o projeto depois de uma semana com quase nenhum uso
+# do banco. Com ouvintes isso não acontece, mas este job garante: uma vez por
+# dia ele chama /api/v1/ping-db, que faz um "select 1" no banco.
+on:
+  schedule:
+    - cron: "17 11 * * *"
+  workflow_dispatch: {}
+
+permissions: {}
+
+jobs:
+  ping-db:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ping /api/v1/ping-db
+        run: |
+          curl --fail --silent --show-error --location \
+            --retry 5 --retry-delay 30 --retry-all-errors \
+            --max-time 120 \
+            "https://carrawave-app-api.onrender.com/api/v1/ping-db"
