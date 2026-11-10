@@ -149,7 +149,7 @@ public class MeService {
 
     private AppUser resolveUser(AuthenticatedUser principal) {
         return appUserRepository.findByPublicId(principal.userId())
-                .orElseThrow(() -> new IllegalStateException("Usuário autenticado não encontrado — token inconsistente."));
+                .orElseThrow(ApiException::invalidToken);
     }
 
     private StationSummary toSummary(Station station, boolean favorited) {

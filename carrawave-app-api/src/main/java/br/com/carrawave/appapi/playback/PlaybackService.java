@@ -201,11 +201,11 @@ public class PlaybackService {
 
     private AppUser resolveUser(AuthenticatedUser principal) {
         return appUserRepository.findByPublicId(principal.userId())
-                .orElseThrow(() -> new IllegalStateException("Usuário autenticado não encontrado — token inconsistente."));
+                .orElseThrow(ApiException::invalidToken);
     }
 
     private Device resolveDevice(AuthenticatedUser principal) {
         return deviceRepository.findByDeviceId(principal.deviceId())
-                .orElseThrow(() -> new IllegalStateException("Device não encontrado — chame /auth/anonymous primeiro."));
+                .orElseThrow(ApiException::invalidToken);
     }
 }
