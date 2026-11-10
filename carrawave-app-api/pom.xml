@@ -47,6 +47,12 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-cache</artifactId>
     </dependency>
+    <!-- Cache com limite de tamanho e expiração (o cache padrão do Spring
+         cresce para sempre e acabava estourando os 512 MB do Render). -->
+    <dependency>
+      <groupId>com.github.ben-manes.caffeine</groupId>
+      <artifactId>caffeine</artifactId>
+    </dependency>
 
     <dependency>
       <groupId>org.postgresql</groupId>

@@ -49,6 +49,15 @@ spring:
   flyway:
     enabled: ${FLYWAY_ENABLED:true}
     baseline-on-migrate: true
+  # O cache "home" é guardado POR USUÁRIO. Sem limite, cada aparelho que já
+  # abriu o app ficava na memória para sempre (~250 KB cada), até estourar os
+  # 512 MB do Render e o servidor ser derrubado. Agora: no máximo 300 entradas
+  # por cache e cada uma vale 10 min (favoritos e "mais ouvidas" também
+  # passam a se atualizar).
+  cache:
+    type: caffeine
+    caffeine:
+      spec: maximumSize=300,expireAfterWrite=10m
   jackson:
     time-zone: UTC
     default-property-inclusion: non_null
