@@ -3,14 +3,14 @@ import type { StationSummary } from '../api/types';
 // Paleta de fallback (mesmos tons da identidade visual) para quando a
 // estação não tem artworkColor definido no banco.
 const FALLBACK_GRADIENTS = [
-  'linear-gradient(145deg,#f6a06b,#b2622d)',
-  'linear-gradient(145deg,#aebf92,#56633f)',
-  'linear-gradient(145deg,#ffc6a5,#d67f48)',
-  'linear-gradient(145deg,#c0b6a5,#5a5246)',
-  'linear-gradient(145deg,#d67f48,#643312)',
-  'linear-gradient(145deg,#ccdbb2,#728157)',
-  'linear-gradient(145deg,#f6a06b,#8c491a)',
-  'linear-gradient(145deg,#8fa073,#3d472b)',
+  'linear-gradient(145deg,#a855f7,#4c1d95)',
+  'linear-gradient(145deg,#22d3ee,#155e75)',
+  'linear-gradient(145deg,#ec4899,#831843)',
+  'linear-gradient(145deg,#4f46e5,#1e1b4b)',
+  'linear-gradient(145deg,#d946ef,#701a75)',
+  'linear-gradient(145deg,#2563eb,#172554)',
+  'linear-gradient(145deg,#f59e0b,#78350f)',
+  'linear-gradient(145deg,#10b981,#064e3b)',
 ];
 
 function hashString(s: string): number {
@@ -31,8 +31,15 @@ function darken(hex: string, amount: number): string {
   return `#${[r, g, b].map((v) => v.toString(16).padStart(2, '0')).join('')}`;
 }
 
+/**
+ * As cores salvas no banco (artworkColor) foram escolhidas para a paleta
+ * antiga (terrosa). Enquanto não forem revisadas, a capa usa a paleta da
+ * nova identidade. Para voltar a usar as cores do banco, troque para true.
+ */
+const USE_DB_ARTWORK_COLOR = false;
+
 export function stationGradient(station: Pick<StationSummary, 'id' | 'artworkColor'>): string {
-  if (station.artworkColor) {
+  if (USE_DB_ARTWORK_COLOR && station.artworkColor) {
     return `linear-gradient(145deg, ${station.artworkColor}, ${darken(station.artworkColor, 0.45)})`;
   }
   return FALLBACK_GRADIENTS[hashString(station.id) % FALLBACK_GRADIENTS.length];

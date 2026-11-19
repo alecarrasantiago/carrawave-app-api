@@ -31,7 +31,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
 
   return (
     <div style={{ position: 'fixed', inset: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(24,16,10,.4)' }} />
+      <div onClick={onClose} style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,20,.4)' }} />
       <form
         onSubmit={handleSubmit}
         style={{
@@ -41,7 +41,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
           borderRadius: 24,
           background: 'var(--surf)',
           border: '1.5px solid var(--line)',
-          boxShadow: '0 20px 44px -18px rgba(46,43,37,.6)',
+          boxShadow: '0 20px 44px -18px rgba(5,8,20,.6)',
           padding: 22,
           animation: 'cw-in .2s ease',
         }}
@@ -49,7 +49,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
         <div className="cw-display" style={{ fontSize: 20 }}>
           {mode === 'login' ? 'Entrar' : 'Criar conta'}
         </div>
-        <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 4 }}>
+        <div style={{ font: '500 12.5px Manrope', color: 'var(--ink60)', marginTop: 4 }}>
           Seus favoritos e histórico anônimos são mantidos ao entrar.
         </div>
 
@@ -73,7 +73,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
           style={inputStyle}
         />
 
-        {error && <div style={{ font: '600 12px Figtree', color: '#c0392b', marginTop: 8 }}>{error}</div>}
+        {error && <div style={{ font: '600 12px Manrope', color: 'var(--danger)', marginTop: 8 }}>{error}</div>}
 
         <button
           type="submit"
@@ -86,7 +86,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
             border: 'none',
             background: 'var(--accent)',
             color: 'var(--onacc)',
-            font: '700 14px Figtree',
+            font: '700 14px Manrope',
             cursor: loading ? 'default' : 'pointer',
             opacity: loading ? 0.7 : 1,
           }}
@@ -96,7 +96,7 @@ export function AuthModal({ onClose, onSuccess }: Props) {
 
         <div
           onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
-          style={{ marginTop: 12, textAlign: 'center', cursor: 'pointer', font: '600 12.5px Figtree', color: 'var(--accent-ink)' }}
+          style={{ marginTop: 12, textAlign: 'center', cursor: 'pointer', font: '600 12.5px Manrope', color: 'var(--accent-ink)' }}
         >
           {mode === 'login' ? 'Não tem conta? Criar agora' : 'Já tem conta? Entrar'}
         </div>
@@ -114,7 +114,7 @@ const inputStyle: CSSProperties = {
   borderRadius: 14,
   border: '1.5px solid var(--line)',
   background: 'var(--bg)',
-  font: '500 16px Figtree',
+  font: '500 16px Manrope',
   color: 'var(--ink)',
   boxSizing: 'border-box',
 };

@@ -1,4 +1,4 @@
-// Service worker mínimo do Carra Wave.
+// Service worker mínimo do CarraWave Music.
 //
 // O objetivo aqui NÃO é tocar rádio offline (impossível — é streaming ao
 // vivo) nem cachear a API. É só o que falta pro navegador considerar o site
@@ -10,7 +10,7 @@
 // JS/CSS do build, ícones). Chamadas pra API do backend e pros streams de
 // áudio das rádios são de outras origens e sempre vão direto pra rede, sem
 // passar por cache.
-const CACHE_NAME = 'carrawave-shell-v1';
+const CACHE_NAME = 'carrawave-shell-v2';
 
 self.addEventListener('install', () => {
   self.skipWaiting();

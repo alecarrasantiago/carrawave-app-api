@@ -38,23 +38,23 @@ export function StationRow({ station, favorited, onPlay, onToggleFavorite }: Pro
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: `400 ${isMobile ? 15 : 17}px Caprasimo, serif`,
+            font: `700 ${isMobile ? 15 : 17}px Sora, Manrope, sans-serif`,
             color: 'rgba(255,255,255,.95)',
           }}
         >
           {stationInitials(station)}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ font: '700 14.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
-          <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ font: '700 14.5px Manrope', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
+          <div style={{ font: '500 12.5px Manrope', color: 'var(--ink60)', marginTop: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {station.frequency} · {station.city.name}
             {isMobile && station.genres[0] ? ` · ${station.genres[0].name}` : ''}
           </div>
         </div>
         {!isMobile && (
           <>
-            <div style={{ flex: 'none', width: 100, font: '500 12.5px Figtree', color: 'var(--ink60)' }}>{station.genres[0]?.name ?? ''}</div>
-            <div style={{ flex: 'none', width: 96, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>{formatListeners(station.listenersNow)}</div>
+            <div style={{ flex: 'none', width: 100, font: '500 12.5px Manrope', color: 'var(--ink60)' }}>{station.genres[0]?.name ?? ''}</div>
+            <div style={{ flex: 'none', width: 96, font: '500 12.5px Manrope', color: 'var(--ink40)' }}>{formatListeners(station.listenersNow)}</div>
           </>
         )}
         <div

@@ -1,57 +1,38 @@
+/* CarraWave Music — identidade visual 2.0 (tema escuro como padrão).
+   Paleta: README do plano "CarraWave Music 2.0", seção 3. */
 :root {
-  --bg: #f5ead8;
-  --surf: #fffaf1;
-  --surf2: #ebddc5;
-  --ink: #201e1d;
-  --ink60: rgba(32, 30, 29, 0.62);
-  --ink40: rgba(32, 30, 29, 0.42);
-  --line: rgba(32, 30, 29, 0.14);
-  --accent: #c67139;
-  --accent-2: #7a8a5e;
-  --accent-soft: rgba(198, 113, 57, 0.13);
-  --accent-ink: #8c491a;
-  --onacc: #fffaf1;
-  --shadow-sm: 0 1px 2px rgba(46, 43, 37, 0.14);
-  --shadow-md: 0 4px 14px rgba(46, 43, 37, 0.16);
-  --shadow-lg: 0 12px 32px rgba(46, 43, 37, 0.22);
-}
+  color-scheme: dark;
 
-:root[data-theme='dark'] {
-  --bg: #17120e;
-  --surf: #241c15;
-  --surf2: #32271d;
-  --ink: #f7eede;
-  --ink60: rgba(247, 238, 222, 0.64);
-  --ink40: rgba(247, 238, 222, 0.4);
-  --line: rgba(247, 238, 222, 0.13);
-  --accent: #f6a06b;
-  --accent-2: #aebf92;
-  --accent-soft: rgba(246, 160, 107, 0.16);
-  --accent-ink: #ffc6a5;
-  --onacc: #3a1f0e;
+  /* marca */
+  --brand-purple: #a855f7;
+  --brand-pink: #d946ef;
+  --brand-cyan: #22d3ee;
+  --brand-indigo: #4f46e5;
+  --brand-gradient: linear-gradient(120deg, #c026d3 0%, #9333ea 45%, #4f46e5 100%);
+  --fav: #ec4899;
+  --success: #34d399;
+  --danger: #fb7185;
+
+  /* superfícies e texto */
+  --bg: #0b1020;
+  --surf: #171d31;
+  --surf2: #222943;
+  --ink: #f8fafc;
+  --ink60: rgba(248, 250, 252, 0.66);
+  --ink40: rgba(248, 250, 252, 0.44);
+  --line: rgba(148, 163, 184, 0.16);
+
+  /* ação primária: roxo mais escuro no preenchimento, para texto branco
+     passar no contraste AA; roxo claro para texto/link sobre o fundo. */
+  --accent: #9333ea;
+  --accent-2: #22d3ee;
+  --accent-soft: rgba(168, 85, 247, 0.16);
+  --accent-ink: #c084fc;
+  --onacc: #ffffff;
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 12px 34px rgba(0, 0, 0, 0.6);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
-    --bg: #17120e;
-    --surf: #241c15;
-    --surf2: #32271d;
-    --ink: #f7eede;
-    --ink60: rgba(247, 238, 222, 0.64);
-    --ink40: rgba(247, 238, 222, 0.4);
-    --line: rgba(247, 238, 222, 0.13);
-    --accent: #f6a06b;
-    --accent-2: #aebf92;
-    --accent-soft: rgba(246, 160, 107, 0.16);
-    --accent-ink: #ffc6a5;
-    --onacc: #3a1f0e;
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 12px 34px rgba(0, 0, 0, 0.6);
-  }
 }
 
 * {
@@ -80,7 +61,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font-family: Figtree, system-ui, sans-serif;
+  font-family: Manrope, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -101,13 +82,27 @@ input {
 }
 
 .cw-display {
-  font-family: Caprasimo, serif;
-  font-weight: 400;
+  font-family: Sora, Manrope, system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.cw-brand-music {
+  font-family: Sora, Manrope, system-ui, sans-serif;
+  font-weight: 600;
+  background: linear-gradient(90deg, var(--brand-pink), var(--brand-purple) 55%, var(--brand-cyan));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.cw-gradient-bg {
+  background: var(--brand-gradient);
 }
 
 .cw-mono {
-  font-family: 'IBM Plex Mono', monospace;
-  font-weight: 500;
+  font-family: Manrope, system-ui, sans-serif;
+  font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
@@ -117,7 +112,7 @@ input {
   height: 9px;
 }
 .cw-scroll::-webkit-scrollbar-thumb {
-  background: rgba(32, 30, 29, 0.2);
+  background: rgba(148, 163, 184, 0.28);
   border-radius: 9px;
 }
 
@@ -195,7 +190,7 @@ input[type='range']::-webkit-slider-thumb {
   height: 14px;
   border-radius: 999px;
   background: var(--accent);
-  box-shadow: 0 2px 6px rgba(24, 16, 10, 0.3);
+  box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.25);
   cursor: pointer;
 }
 input[type='range']::-moz-range-thumb {

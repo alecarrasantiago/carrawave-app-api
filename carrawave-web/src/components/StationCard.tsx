@@ -23,7 +23,7 @@ export function StationCard({ station, favorited, onPlay, onToggleFavorite }: Pr
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          font: '400 38px Caprasimo, serif',
+          font: '700 38px Sora, Manrope, sans-serif',
           color: 'rgba(255,255,255,.95)',
           boxShadow: 'var(--shadow-md)',
         }}
@@ -40,11 +40,11 @@ export function StationCard({ station, favorited, onPlay, onToggleFavorite }: Pr
               gap: 5,
               padding: '4px 9px',
               borderRadius: 999,
-              background: 'rgba(24,16,10,.5)',
+              background: 'rgba(5,8,20,.5)',
             }}
           >
-            <div style={{ width: 5, height: 5, borderRadius: 999, background: '#ffd7bd', animation: 'cw-pulse 1.5s infinite' }} />
-            <span style={{ font: "500 8.5px 'IBM Plex Mono', monospace", letterSpacing: '.1em', color: '#fff' }}>AO VIVO</span>
+            <div style={{ width: 5, height: 5, borderRadius: 999, background: 'var(--fav)', animation: 'cw-pulse 1.5s infinite' }} />
+            <span style={{ font: "800 8.5px Manrope, sans-serif", letterSpacing: '.1em', color: '#fff' }}>AO VIVO</span>
           </div>
         )}
         <div
@@ -68,14 +68,14 @@ export function StationCard({ station, favorited, onPlay, onToggleFavorite }: Pr
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            boxShadow: '0 5px 14px rgba(24,16,10,.3)',
+            boxShadow: '0 5px 14px rgba(5,8,20,.3)',
           }}
         >
           <PlayIcon color="var(--ink)" />
         </div>
       </div>
-      <div style={{ font: '700 14px Figtree', marginTop: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
-      <div style={{ font: '500 12px Figtree', color: 'var(--ink60)', marginTop: 2 }}>
+      <div style={{ font: '700 14px Manrope', marginTop: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
+      <div style={{ font: '500 12px Manrope', color: 'var(--ink60)', marginTop: 2 }}>
         {station.frequency} · {station.city.name}
       </div>
     </div>

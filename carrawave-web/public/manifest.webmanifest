@@ -1,13 +1,13 @@
 {
-  "name": "Carra Wave",
-  "short_name": "Carra Wave",
-  "description": "Sua sintonia, em qualquer lugar. Rádios brasileiras ao vivo.",
+  "name": "CarraWave Music",
+  "short_name": "CarraWave",
+  "description": "CarraWave Music: rádios do Brasil inteiro, ao vivo.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "any",
-  "background_color": "#f5ead8",
-  "theme_color": "#c67139",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
   "lang": "pt-BR",
   "icons": [
     {

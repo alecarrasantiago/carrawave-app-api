@@ -71,7 +71,7 @@ export function NowPlayingSheet({
         >
           <ChevronDownIcon size={22} color="var(--ink)" />
         </div>
-        <div style={{ font: '700 11px Figtree', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
+        <div style={{ font: '700 11px Manrope', letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
           Tocando agora
         </div>
         <div style={{ width: 38, height: 38 }} />
@@ -87,9 +87,9 @@ export function NowPlayingSheet({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: '400 68px Caprasimo, serif',
+            font: '700 68px Sora, Manrope, sans-serif',
             color: 'rgba(255,255,255,.95)',
-            boxShadow: '0 28px 60px -24px rgba(46,43,37,.5)',
+            boxShadow: '0 28px 60px -24px rgba(5,8,20,.5)',
             flex: 'none',
           }}
         >
@@ -102,13 +102,13 @@ export function NowPlayingSheet({
           </div>
           <div style={{ marginTop: 8, minHeight: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
             {nowPlayingTitle ? (
-              <span style={{ font: '600 14px Figtree', color: 'var(--ink60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span style={{ font: '600 14px Manrope', color: 'var(--ink60)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {nowPlayingTitle}
               </span>
             ) : (
               <>
                 <div style={{ width: 6, height: 6, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
-                <span style={{ font: '600 14px Figtree', color: 'var(--ink60)' }}>Ao vivo · {station.city.name}</span>
+                <span style={{ font: '600 14px Manrope', color: 'var(--ink60)' }}>Ao vivo · {station.city.name}</span>
               </>
             )}
           </div>
@@ -181,7 +181,7 @@ export function NowPlayingSheet({
               alignItems: 'center',
               justifyContent: 'center',
               gap: 10,
-              font: '700 14px Figtree',
+              font: '700 14px Manrope',
               color: 'var(--ink)',
             }}
           >
@@ -193,7 +193,7 @@ export function NowPlayingSheet({
 
       {timerOpen && (
         <div style={{ position: 'absolute', inset: 0, zIndex: 10, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: '0 16px 28px' }}>
-          <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(24,16,10,.28)' }} />
+          <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,20,.28)' }} />
           <div
             style={{
               position: 'relative',
@@ -202,13 +202,13 @@ export function NowPlayingSheet({
               borderRadius: 24,
               background: 'var(--surf)',
               border: '1.5px solid var(--line)',
-              boxShadow: '0 20px 44px -18px rgba(46,43,37,.6)',
+              boxShadow: '0 20px 44px -18px rgba(5,8,20,.6)',
               padding: 16,
               animation: 'cw-in .2s ease',
             }}
           >
             <div className="cw-display" style={{ fontSize: 18 }}>Temporizador</div>
-            <div style={{ font: '500 12px Figtree', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
+            <div style={{ font: '500 12px Manrope', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 12 }}>
               {TIMER_OPTIONS.map((t) => (
                 <div
@@ -226,7 +226,7 @@ export function NowPlayingSheet({
                     padding: '11px 13px',
                     borderRadius: 16,
                     background: sleepTimer === t.minutes ? 'var(--accent-soft)' : 'transparent',
-                    font: '600 13.5px Figtree',
+                    font: '600 13.5px Manrope',
                     color: sleepTimer === t.minutes ? 'var(--accent-ink)' : 'var(--ink)',
                   }}
                 >
@@ -250,7 +250,7 @@ export function NowPlayingSheet({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                font: '600 13px Figtree',
+                font: '600 13px Manrope',
                 color: 'var(--ink60)',
               }}
             >

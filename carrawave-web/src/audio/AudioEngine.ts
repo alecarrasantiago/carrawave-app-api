@@ -132,7 +132,7 @@ class AudioEngine {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: station.name,
       artist: `${station.frequency} · ${station.city.name}`,
-      album: 'Carra Wave',
+      album: 'CarraWave Music',
       artwork,
     });
   }

@@ -56,7 +56,7 @@ export function PlayerBar({
           <div
             style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', padding: `0 16px ${bottomOffset + 76 + 12}px` }}
           >
-            <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(24,16,10,.28)' }} />
+            <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,20,.28)' }} />
             <div
               style={{
                 position: 'relative',
@@ -65,13 +65,13 @@ export function PlayerBar({
                 borderRadius: 24,
                 background: 'var(--surf)',
                 border: '1.5px solid var(--line)',
-                boxShadow: '0 20px 44px -18px rgba(46,43,37,.6)',
+                boxShadow: '0 20px 44px -18px rgba(5,8,20,.6)',
                 padding: 16,
                 animation: 'cw-in .2s ease',
               }}
             >
               <div className="cw-display" style={{ fontSize: 18 }}>Temporizador</div>
-              <div style={{ font: '500 12px Figtree', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
+              <div style={{ font: '500 12px Manrope', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 12 }}>
                 {TIMER_OPTIONS.map((t) => (
                   <div
@@ -89,7 +89,7 @@ export function PlayerBar({
                       padding: '11px 13px',
                       borderRadius: 16,
                       background: sleepTimer === t.minutes ? 'var(--accent-soft)' : 'transparent',
-                      font: '600 13.5px Figtree',
+                      font: '600 13.5px Manrope',
                       color: sleepTimer === t.minutes ? 'var(--accent-ink)' : 'var(--ink)',
                     }}
                   >
@@ -125,7 +125,7 @@ export function PlayerBar({
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  font: '600 13px Figtree',
+                  font: '600 13px Manrope',
                   color: 'var(--ink60)',
                 }}
               >
@@ -148,7 +148,7 @@ export function PlayerBar({
             padding: '10px 14px',
             background: 'var(--surf)',
             borderTop: '1px solid var(--line)',
-            boxShadow: '0 -8px 26px -18px rgba(46,43,37,.6)',
+            boxShadow: '0 -8px 26px -18px rgba(5,8,20,.6)',
           }}
         >
           <div
@@ -162,17 +162,17 @@ export function PlayerBar({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              font: '400 15px Caprasimo, serif',
+              font: '700 15px Sora, Manrope, sans-serif',
               color: 'rgba(255,255,255,.95)',
             }}
           >
             {stationInitials(station)}
           </div>
           <div style={{ flex: 1, minWidth: 0 }} onClick={() => onExpand?.()}>
-            <div style={{ font: '700 13.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
+            <div style={{ font: '700 13.5px Manrope', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
               <div style={{ flex: 'none', width: 5, height: 5, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
-              <span style={{ font: '500 11.5px Figtree', color: 'var(--ink60)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <span style={{ font: '500 11.5px Manrope', color: 'var(--ink60)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 Ao vivo · {station.city.name}
               </span>
             </div>
@@ -208,7 +208,7 @@ export function PlayerBar({
         <div
           style={{ position: 'absolute', inset: 0, zIndex: 30, display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', padding: '0 26px 88px' }}
         >
-          <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(24,16,10,.28)' }} />
+          <div onClick={() => setTimerOpen(false)} style={{ position: 'absolute', inset: 0, background: 'rgba(5,8,20,.28)' }} />
           <div
             style={{
               position: 'relative',
@@ -216,13 +216,13 @@ export function PlayerBar({
               borderRadius: 24,
               background: 'var(--surf)',
               border: '1.5px solid var(--line)',
-              boxShadow: '0 20px 44px -18px rgba(46,43,37,.6)',
+              boxShadow: '0 20px 44px -18px rgba(5,8,20,.6)',
               padding: 16,
               animation: 'cw-in .2s ease',
             }}
           >
             <div className="cw-display" style={{ fontSize: 18 }}>Temporizador</div>
-            <div style={{ font: '500 12px Figtree', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
+            <div style={{ font: '500 12px Manrope', color: 'var(--ink60)', marginTop: 4 }}>A reprodução para no fim do tempo.</div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 2, marginTop: 12 }}>
               {TIMER_OPTIONS.map((t) => (
                 <div
@@ -240,7 +240,7 @@ export function PlayerBar({
                     padding: '11px 13px',
                     borderRadius: 16,
                     background: sleepTimer === t.minutes ? 'var(--accent-soft)' : 'transparent',
-                    font: '600 13.5px Figtree',
+                    font: '600 13.5px Manrope',
                     color: sleepTimer === t.minutes ? 'var(--accent-ink)' : 'var(--ink)',
                   }}
                 >
@@ -264,7 +264,7 @@ export function PlayerBar({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                font: '600 13px Figtree',
+                font: '600 13px Manrope',
                 color: 'var(--ink60)',
               }}
             >
@@ -286,7 +286,7 @@ export function PlayerBar({
           padding: '12px 26px',
           background: 'var(--surf)',
           borderTop: '1px solid var(--line)',
-          boxShadow: '0 -8px 26px -18px rgba(46,43,37,.6)',
+          boxShadow: '0 -8px 26px -18px rgba(5,8,20,.6)',
         }}
       >
         <div
@@ -299,17 +299,17 @@ export function PlayerBar({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: '400 18px Caprasimo, serif',
+            font: '700 18px Sora, Manrope, sans-serif',
             color: 'rgba(255,255,255,.95)',
           }}
         >
           {stationInitials(station)}
         </div>
         <div style={{ flex: 'none', width: 190, minWidth: 0, cursor: onExpand ? 'pointer' : undefined }} onClick={() => onExpand?.()}>
-          <div style={{ font: '700 14px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
+          <div style={{ font: '700 14px Manrope', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{station.name}</div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3 }}>
             <div style={{ flex: 'none', width: 5, height: 5, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
-            <span style={{ font: '500 12px Figtree', color: 'var(--ink60)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <span style={{ font: '500 12px Manrope', color: 'var(--ink60)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               Ao vivo · {station.city.name}
             </span>
           </div>
@@ -381,7 +381,7 @@ export function PlayerBar({
             padding: '7px 13px',
             borderRadius: 999,
             background: sleepTimer ? 'var(--accent-soft)' : 'var(--surf2)',
-            font: '600 12px Figtree',
+            font: '600 12px Manrope',
             color: sleepTimer ? 'var(--accent-ink)' : 'var(--ink60)',
           }}
         >

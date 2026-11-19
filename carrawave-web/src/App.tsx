@@ -596,12 +596,12 @@ export default function App() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Rádio, cidade ou gênero"
-              style={{ flex: 1, minWidth: 0, border: 0, outline: 'none', background: 'transparent', font: '500 16px Figtree', color: 'var(--ink)' }}
+              style={{ flex: 1, minWidth: 0, border: 0, outline: 'none', background: 'transparent', font: '500 16px Manrope', color: 'var(--ink)' }}
             />
           </div>
           {!isMobile && <div style={{ flex: 1 }} />}
           {!isMobile && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 999, background: 'var(--accent-soft)', font: '600 11.5px Figtree', color: 'var(--accent-ink)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 7, padding: '5px 11px', borderRadius: 999, background: 'var(--accent-soft)', font: '600 11.5px Manrope', color: 'var(--accent-ink)' }}>
               <LockIcon />
               Conexão segura
             </div>
@@ -633,7 +633,7 @@ export default function App() {
                 <MicIcon size={36} color="var(--ink40)" />
               </div>
               <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>Podcasts — em breve.</div>
-              <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
+              <div style={{ font: '500 14px Manrope', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
                 Estamos preparando os melhores podcasts pra você. Por enquanto, aproveite as rádios ao vivo em Explorar.
               </div>
             </div>
@@ -641,12 +641,12 @@ export default function App() {
             <>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
                 <div className="cw-display" style={{ fontSize: isMobile ? 22 : 26, letterSpacing: '-.01em' }}>{pageTitle}</div>
-                <div style={{ font: '500 13px Figtree', color: 'var(--ink60)' }}>{n === 1 ? '1 emissora' : `${n} emissoras`}</div>
+                <div style={{ font: '500 13px Manrope', color: 'var(--ink60)' }}>{n === 1 ? '1 emissora' : `${n} emissoras`}</div>
               </div>
               {onlineStats && onlineStats.online > 0 && (
                 <div
-                  title="Pessoas com o Carra Wave aberto agora"
-                  style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: 'var(--surf2)', font: '600 12.5px Figtree', color: 'var(--ink60)' }}
+                  title="Pessoas com o CarraWave Music aberto agora"
+                  style={{ marginTop: 10, display: 'inline-flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderRadius: 999, background: 'var(--surf2)', font: '600 12.5px Manrope', color: 'var(--ink60)' }}
                 >
                   <span style={{ width: 7, height: 7, borderRadius: 999, background: 'var(--accent)', animation: 'cw-pulse 1.5s infinite' }} />
                   {onlineStats.listening > 0
@@ -666,7 +666,7 @@ export default function App() {
                       border: '1.5px solid var(--line)',
                       background: 'var(--surf)',
                       color: 'var(--ink)',
-                      font: '600 12.5px Figtree',
+                      font: '600 12.5px Manrope',
                       cursor: 'pointer',
                     }}
                   >
@@ -689,10 +689,10 @@ export default function App() {
                         cursor: 'pointer',
                         padding: '8px 16px',
                         borderRadius: 999,
-                        border: `1.5px solid ${c === chip ? 'var(--ink)' : 'var(--line)'}`,
-                        background: c === chip ? 'var(--ink)' : 'transparent',
-                        color: c === chip ? 'var(--bg)' : 'var(--ink)',
-                        font: '600 12.5px Figtree',
+                        border: `1.5px solid ${c === chip ? 'var(--brand-purple)' : 'var(--line)'}`,
+                        background: c === chip ? 'var(--accent)' : 'transparent',
+                        color: c === chip ? 'var(--onacc)' : 'var(--ink)',
+                        font: '600 12.5px Manrope',
                       }}
                     >
                       {c}
@@ -702,7 +702,7 @@ export default function App() {
               )}
 
               {connecting && !loadError && (
-                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Figtree', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Manrope', display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
                   Conectando ao servidor… na primeira vez pode levar até 1 minuto.
                 </div>
@@ -713,7 +713,7 @@ export default function App() {
                   a tela ficava em branco ("0 emissoras") nesse meio-tempo, parecendo
                   travada. */}
               {!connecting && stationsRetrying && !loadError && (
-                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Figtree', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ marginTop: 24, padding: '16px 20px', borderRadius: 18, background: 'var(--surf2)', color: 'var(--ink60)', font: '600 13px Manrope', display: 'flex', alignItems: 'center', gap: 10 }}>
                   <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
                   Reconectando ao servidor…
                 </div>
@@ -722,7 +722,7 @@ export default function App() {
               {/* Carregamento comum (rápido, sem retry) da lista de rádios — só um
                   aviso leve, pra tela nunca ficar muda enquanto busca. */}
               {loading && !connecting && !stationsRetrying && !loadError && n === 0 && (
-                <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 10, color: 'var(--ink40)', font: '600 13px Figtree' }}>
+                <div style={{ marginTop: 24, display: 'flex', alignItems: 'center', gap: 10, color: 'var(--ink40)', font: '600 13px Manrope' }}>
                   <div style={{ width: 14, height: 14, borderRadius: 999, border: '2px solid var(--ink40)', borderTopColor: 'transparent', animation: 'cw-spin 0.8s linear infinite' }} />
                   Carregando rádios…
                 </div>
@@ -736,7 +736,7 @@ export default function App() {
                     borderRadius: 18,
                     background: 'var(--accent-soft)',
                     color: 'var(--accent-ink)',
-                    font: '600 13px Figtree',
+                    font: '600 13px Manrope',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -754,7 +754,7 @@ export default function App() {
                       borderRadius: 999,
                       background: 'var(--accent-ink)',
                       color: 'var(--onacc)',
-                      font: '700 12px Figtree',
+                      font: '700 12px Manrope',
                     }}
                   >
                     Tentar novamente
@@ -768,7 +768,7 @@ export default function App() {
                     <LockIcon size={36} color="var(--ink40)" />
                   </div>
                   <div className="cw-display" style={{ fontSize: 21, marginTop: 22 }}>Favoritos são só para quem tem conta.</div>
-                  <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
+                  <div style={{ font: '500 14px Manrope', color: 'var(--ink60)', marginTop: 9, maxWidth: 320 }}>
                     Crie uma conta gratuita para salvar suas rádios favoritas e encontrá-las de novo em qualquer aparelho.
                   </div>
                   <div
@@ -781,7 +781,7 @@ export default function App() {
                       borderRadius: 999,
                       background: 'var(--accent)',
                       color: 'var(--onacc)',
-                      font: '700 13.5px Figtree',
+                      font: '700 13.5px Manrope',
                     }}
                   >
                     Entrar ou criar conta
@@ -801,7 +801,7 @@ export default function App() {
                       ? 'Você ainda não ouviu nenhuma rádio.'
                       : 'Nenhuma rádio encontrada.'}
                   </div>
-                  <div style={{ font: '500 14px Figtree', color: 'var(--ink60)', marginTop: 9 }}>
+                  <div style={{ font: '500 14px Manrope', color: 'var(--ink60)', marginTop: 9 }}>
                     {nav === 'fav'
                       ? 'Toque no coração de uma rádio para guardá-la aqui.'
                       : nav === 'recent'
@@ -844,7 +844,7 @@ export default function App() {
                       padding: '11px 22px',
                       borderRadius: 999,
                       border: '1.5px solid var(--line)',
-                      font: '700 13px Figtree',
+                      font: '700 13px Manrope',
                       color: 'var(--ink)',
                       opacity: loadingMore ? 0.6 : 1,
                     }}
@@ -906,11 +906,11 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
     <div style={{ maxWidth: 480 }}>
       <div className="cw-display" style={{ fontSize: 26 }}>Configurações</div>
       <div style={{ marginTop: 20, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
-        <div style={{ font: '700 13px Figtree' }}>Conta</div>
-        <div style={{ font: '500 13px Figtree', color: 'var(--ink60)', marginTop: 6 }}>
+        <div style={{ font: '700 13px Manrope' }}>Conta</div>
+        <div style={{ font: '500 13px Manrope', color: 'var(--ink60)', marginTop: 6 }}>
           {logged ? `${me?.displayName ?? ''} · ${me?.email ?? ''}` : `Convidado · ${me?.anonymousLabel ?? ''}`}
         </div>
-        <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 10 }}>
+        <div style={{ font: '500 12.5px Manrope', color: 'var(--ink40)', marginTop: 10 }}>
           {me?.favoriteCount ?? 0} rádio(s) favoritada(s).
         </div>
         <div
@@ -923,7 +923,7 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
             padding: '9px 16px',
             borderRadius: 999,
             border: '1.5px solid var(--line)',
-            font: '600 12.5px Figtree',
+            font: '600 12.5px Manrope',
             color: 'var(--ink60)',
           }}
         >
@@ -933,9 +933,9 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
 
       {!installed && (
         <div style={{ marginTop: 16, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
-          <div style={{ font: '700 13px Figtree' }}>Instalar como app</div>
-          <div style={{ font: '500 12.5px Figtree', color: 'var(--ink60)', marginTop: 6 }}>
-            Coloca o Carra Wave na tela inicial do seu celular pra abrir direto, como um app — sem digitar o endereço no navegador.
+          <div style={{ font: '700 13px Manrope' }}>Instalar como app</div>
+          <div style={{ font: '500 12.5px Manrope', color: 'var(--ink60)', marginTop: 6 }}>
+            Coloca o CarraWave Music na tela inicial do seu celular pra abrir direto, como um app — sem digitar o endereço no navegador.
           </div>
 
           {canInstall && (
@@ -950,7 +950,7 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
                 borderRadius: 999,
                 background: 'var(--accent)',
                 color: 'var(--onacc)',
-                font: '700 12.5px Figtree',
+                font: '700 12.5px Manrope',
               }}
             >
               Instalar app
@@ -958,26 +958,26 @@ function SettingsPanel({ me, onAuthClick }: { me: MeResponse | null; onAuthClick
           )}
 
           {!canInstall && isIOS && (
-            <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
+            <div style={{ font: '500 12.5px Manrope', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
               No iPhone: toque no ícone de compartilhar do Safari (o quadrado com a flecha pra cima, na barra de baixo) e escolha <strong>"Adicionar à Tela de Início"</strong>.
             </div>
           )}
 
           {!canInstall && !isIOS && (
-            <div style={{ font: '500 12.5px Figtree', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
+            <div style={{ font: '500 12.5px Manrope', color: 'var(--ink40)', marginTop: 12, lineHeight: 1.6 }}>
               No menu do navegador (geralmente os três pontinhos, no canto da tela), procure por <strong>"Instalar app"</strong> ou <strong>"Adicionar à tela inicial"</strong>.
             </div>
           )}
         </div>
       )}
 
-      <div style={{ marginTop: 16, font: '500 12.5px Figtree', color: 'var(--ink40)' }}>
+      <div style={{ marginTop: 16, font: '500 12.5px Manrope', color: 'var(--ink40)' }}>
         Suas preferências de tema, qualidade de áudio e reprodução automática podem ser ajustadas na versão mobile e sincronizam com esta conta.
       </div>
 
       <div style={{ marginTop: 16, padding: 18, borderRadius: 20, background: 'var(--surf)', border: '1px solid var(--line)' }}>
-        <div style={{ font: '700 13px Figtree' }}>Desenvolvido por</div>
-        <div style={{ font: '600 13px Figtree', color: 'var(--ink)', marginTop: 6 }}>
+        <div style={{ font: '700 13px Manrope' }}>Desenvolvido por</div>
+        <div style={{ font: '600 13px Manrope', color: 'var(--ink)', marginTop: 6 }}>
           Alessandro Carra Rodrigues Santiago
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 14 }}>

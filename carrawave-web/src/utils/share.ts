@@ -1,5 +1,6 @@
 import type { StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from './gradient';
+import { WAVE_PATH } from '../components/Logo';
 
 export type ShareResult = 'shared' | 'copied' | 'downloaded' | 'cancelled' | 'failed';
 
@@ -9,12 +10,12 @@ export const SITE_URL = 'https://carrawave-phi.vercel.app/';
 /** Mensagem pronta que acompanha o compartilhamento. */
 export function shareMessage(station: Pick<StationSummary, 'id' | 'name'>): string {
   return [
-    `🎶 Estou ouvindo ${station.name} no Carra Wave!`,
+    `🎶 Estou ouvindo ${station.name} no CarraWave Music!`,
     '',
     'São rádios de todo o Brasil, ao vivo e de graça, direto no celular. Vem ouvir comigo 👇',
     stationShareUrl(station),
     '',
-    `Conheça o Carra Wave: ${SITE_URL}`,
+    `Conheça o CarraWave Music: ${SITE_URL}`,
   ].join('\n');
 }
 
@@ -25,7 +26,7 @@ export function stationShareUrl(station: Pick<StationSummary, 'id'>): string {
 
 function gradientColors(station: StationSummary): [string, string] {
   const hex = stationGradient(station).match(/#[0-9a-fA-F]{6}/g) ?? [];
-  return [hex[0] ?? '#d67f48', hex[1] ?? '#643312'];
+  return [hex[0] ?? '#a855f7', hex[1] ?? '#4c1d95'];
 }
 
 function roundRect(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -61,7 +62,7 @@ export async function makeStoryImage(station: StationSummary): Promise<Blob | nu
   try {
     try {
       await Promise.race([
-        Promise.all([document.fonts.load('400 120px Caprasimo'), document.fonts.load('700 40px Figtree')]),
+        Promise.all([document.fonts.load('700 120px Sora'), document.fonts.load('700 40px Manrope')]),
         new Promise((r) => setTimeout(r, 1500)),
       ]);
     } catch {
@@ -91,7 +92,7 @@ export async function makeStoryImage(station: StationSummary): Promise<Blob | nu
 
     ctx.textAlign = 'center';
     ctx.fillStyle = 'rgba(255,255,255,.92)';
-    ctx.font = '700 44px Figtree, system-ui, sans-serif';
+    ctx.font = '700 44px Manrope, system-ui, sans-serif';
     ctx.fillText('OUVINDO AGORA', W / 2, 300);
 
     // capa
@@ -110,14 +111,14 @@ export async function makeStoryImage(station: StationSummary): Promise<Blob | nu
     ctx.fill();
     ctx.restore();
     ctx.fillStyle = 'rgba(255,255,255,.96)';
-    ctx.font = '400 250px Caprasimo, Georgia, serif';
+    ctx.font = '700 250px Sora, Manrope, sans-serif';
     ctx.textBaseline = 'middle';
     ctx.fillText(stationInitials(station), W / 2, y + size / 2 + 10);
     ctx.textBaseline = 'alphabetic';
 
     // nome
     ctx.fillStyle = '#ffffff';
-    ctx.font = '400 96px Caprasimo, Georgia, serif';
+    ctx.font = '700 96px Sora, Manrope, sans-serif';
     const lines = wrapText(ctx, station.name, W - 160);
     let ty = 1250;
     for (const l of lines) {
@@ -126,16 +127,29 @@ export async function makeStoryImage(station: StationSummary): Promise<Blob | nu
     }
 
     ctx.fillStyle = 'rgba(255,255,255,.85)';
-    ctx.font = '600 48px Figtree, system-ui, sans-serif';
+    ctx.font = '600 48px Manrope, system-ui, sans-serif';
     const sub = [station.frequency, `${station.city.name} · ${station.city.state}`].filter(Boolean).join(' · ');
     ctx.fillText(sub, W / 2, ty + 20);
 
-    // rodapé
+    // rodapé: símbolo da onda + nome
+    ctx.save();
+    ctx.translate(W / 2 - 96, 1500);
+    ctx.scale(4, 4);
+    const wave = ctx.createLinearGradient(0, 0, 48, 0);
+    wave.addColorStop(0, '#f0abfc');
+    wave.addColorStop(0.5, '#ffffff');
+    wave.addColorStop(1, '#a5f3fc');
+    ctx.strokeStyle = wave;
+    ctx.lineWidth = 2.6;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke(new Path2D(WAVE_PATH));
+    ctx.restore();
     ctx.fillStyle = 'rgba(255,255,255,.95)';
-    ctx.font = '400 72px Caprasimo, Georgia, serif';
-    ctx.fillText('Carra Wave', W / 2, 1700);
+    ctx.font = '700 72px Sora, Manrope, sans-serif';
+    ctx.fillText('CarraWave Music', W / 2, 1700);
     ctx.fillStyle = 'rgba(255,255,255,.8)';
-    ctx.font = '600 38px Figtree, system-ui, sans-serif';
+    ctx.font = '600 38px Manrope, system-ui, sans-serif';
     ctx.fillText('Rádios de todo o Brasil, ao vivo', W / 2, 1765);
 
     return await new Promise<Blob | null>((resolve) => canvas.toBlob((b) => resolve(b), 'image/png'));
@@ -173,7 +187,7 @@ export async function shareStation(station: StationSummary): Promise<ShareResult
   const url = stationShareUrl(station);
   const text = shareMessage(station);
   const blob = await makeStoryImage(station);
-  const file = blob ? new File([blob], `carra-wave-${station.slug}.png`, { type: 'image/png' }) : null;
+  const file = blob ? new File([blob], `carrawave-music-${station.slug}.png`, { type: 'image/png' }) : null;
   const copied = await copyText(url);
 
   try {
@@ -191,7 +205,7 @@ export async function shareStation(station: StationSummary): Promise<ShareResult
   }
 
   if (blob) {
-    downloadBlob(blob, `carra-wave-${station.slug}.png`);
+    downloadBlob(blob, `carrawave-music-${station.slug}.png`);
     return 'downloaded';
   }
   return copied ? 'copied' : 'failed';

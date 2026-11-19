@@ -2,6 +2,7 @@ import type { MeResponse, StationSummary } from '../api/types';
 import { stationGradient, stationInitials } from '../utils/gradient';
 import { CarnivalMaskIcon, ClockIcon, CompassIcon, HeartIcon, HomeIcon, HeadphonesIcon, MicIcon, PandeiroIcon, RockIcon, SettingsIcon } from './icons';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { Logo } from './Logo';
 
 export type NavKey = 'home' | 'explore' | 'podcasts' | 'samba' | 'rock' | 'pagode' | 'hiphop' | 'fav' | 'recent' | 'settings';
 
@@ -85,7 +86,7 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
               }}
             >
               {NAV_ICON[n.key](color)}
-              <span style={{ font: '600 10px Figtree', color, letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{n.label}</span>
+              <span style={{ font: '600 10px Manrope', color, letterSpacing: '-.01em', whiteSpace: 'nowrap' }}>{n.label}</span>
             </div>
           );
         })}
@@ -106,14 +107,7 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '0 6px' }}>
-        <div style={{ width: 36, height: 36, borderRadius: 999, background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <svg width="20" height="20" viewBox="0 0 32 32" fill="none" stroke="var(--onacc)" strokeWidth={2.75} strokeLinecap="round">
-            <circle cx="16" cy="16" r="3.2" fill="var(--onacc)" stroke="none" />
-            <path d="M10.2 10.2a8.2 8.2 0 000 11.6" />
-            <path d="M21.8 10.2a8.2 8.2 0 010 11.6" />
-          </svg>
-        </div>
-        <span className="cw-display" style={{ fontSize: 18 }}>Carra Wave</span>
+        <Logo size={30} />
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 3, marginTop: 24 }}>
@@ -129,9 +123,9 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
               gap: 11,
               padding: '10px 14px',
               borderRadius: 999,
-              background: nav === n.key ? 'var(--ink)' : 'transparent',
-              color: nav === n.key ? 'var(--bg)' : 'var(--ink)',
-              font: '700 13.5px Figtree',
+              background: nav === n.key ? 'var(--accent-soft)' : 'transparent',
+              color: nav === n.key ? 'var(--accent-ink)' : 'var(--ink)',
+              font: '700 13.5px Manrope',
             }}
           >
             {n.label}
@@ -139,7 +133,7 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
         ))}
       </div>
 
-      <div style={{ marginTop: 24, padding: '0 8px', font: "600 11px 'IBM Plex Mono', monospace", letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
+      <div style={{ marginTop: 24, padding: '0 8px', font: "800 11px Manrope, sans-serif", letterSpacing: '.12em', textTransform: 'uppercase', color: 'var(--ink40)' }}>
         Suas favoritas
       </div>
       <div className="cw-scroll" style={{ marginTop: 10, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto', maxHeight: 210 }}>
@@ -160,17 +154,17 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                font: '400 11px Caprasimo, serif',
+                font: '700 11px Sora, Manrope, sans-serif',
                 color: 'rgba(255,255,255,.95)',
               }}
             >
               {stationInitials(f)}
             </div>
-            <div style={{ flex: 1, minWidth: 0, font: '600 12.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</div>
+            <div style={{ flex: 1, minWidth: 0, font: '600 12.5px Manrope', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{f.name}</div>
           </div>
         ))}
         {favorites.length === 0 && (
-          <div style={{ font: '500 12px Figtree', color: 'var(--ink40)', padding: '4px 8px', lineHeight: 1.4 }}>
+          <div style={{ font: '500 12px Manrope', color: 'var(--ink40)', padding: '4px 8px', lineHeight: 1.4 }}>
             {logged ? 'Nenhuma ainda.' : 'Crie uma conta para favoritar rádios.'}
           </div>
         )}
@@ -189,22 +183,22 @@ export function Sidebar({ nav, onNavChange, favorites, onPlayFavorite, me, onAut
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            font: '400 13px Caprasimo, serif',
+            font: '700 13px Sora, Manrope, sans-serif',
             color: 'var(--accent-ink)',
           }}
         >
           {acctIni}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ font: '700 12.5px Figtree', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{acctName}</div>
-          <div style={{ font: "500 10px 'IBM Plex Mono', monospace", color: 'var(--ink40)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          <div style={{ font: '700 12.5px Manrope', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{acctName}</div>
+          <div style={{ font: "600 10px Manrope, sans-serif", color: 'var(--ink40)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
             {acctSub}
           </div>
         </div>
         <div
           onClick={onAuthClick}
           className="cw-hover-soft"
-          style={{ cursor: 'pointer', flex: 'none', padding: '5px 10px', borderRadius: 999, border: '1.5px solid var(--line)', font: '600 11px Figtree', color: 'var(--ink60)' }}
+          style={{ cursor: 'pointer', flex: 'none', padding: '5px 10px', borderRadius: 999, border: '1.5px solid var(--line)', font: '600 11px Manrope', color: 'var(--ink60)' }}
         >
           {logged ? 'Sair' : 'Entrar'}
         </div>

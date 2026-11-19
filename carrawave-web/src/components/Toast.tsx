@@ -26,7 +26,7 @@ export function Toast({ message, sidebarWidth, bottom = 96 }: Props) {
           borderRadius: 999,
           background: 'var(--ink)',
           color: 'var(--bg)',
-          font: '600 13px Figtree',
+          font: '600 13px Manrope',
           animation: 'cw-in .22s ease',
           textAlign: 'center',
         }}
